@@ -1171,23 +1171,6 @@ document.addEventListener('mousedown', (e) => {
     }
 });
 
-// Show cursor when mouse enters navbar or footer
-document.querySelector('.navbar').addEventListener('mouseenter', () => {
-    cursorDot.style.opacity = '1';
-});
-
-document.querySelector('footer').addEventListener('mouseenter', () => {
-    cursorDot.style.opacity = '1';
-});
-
-document.querySelector('.tab-strip').addEventListener('mouseenter', () => {
-    cursorDot.style.opacity = '1';
-});
-
-document.querySelector('.new-tab-screen').addEventListener('mouseenter', () => {
-    cursorDot.style.opacity = '1';
-});
-
 
 
         function updateHoverTargets() {
@@ -1285,17 +1268,36 @@ function showNotification(message) {
 
 
         window.onload = () => { 
-            loadWispSettings();
-            initProxy();
-            scramjet.init();
-            createNewTab(); 
-            refreshAllPings(); 
-            setTimeout(hideBH, 1000); 
-        };
+    loadWispSettings();
+    initProxy();
+    scramjet.init();
+    createNewTab(); 
+    refreshAllPings(); 
+    setTimeout(hideBH, 1000);
+    
+    // Show cursor on UI elements (add after page loads)
+    document.querySelector('.navbar').addEventListener('mouseenter', () => {
+        cursorDot.style.opacity = '1';
+    });
+
+    document.querySelector('footer').addEventListener('mouseenter', () => {
+        cursorDot.style.opacity = '1';
+    });
+
+    document.querySelector('.tab-strip').addEventListener('mouseenter', () => {
+        cursorDot.style.opacity = '1';
+    });
+
+    document.querySelector('.new-tab-screen').addEventListener('mouseenter', () => {
+        cursorDot.style.opacity = '1';
+    });
+};
+
         document.getElementById('bar').onkeydown = (e) => { if(e.key === 'Enter') nav(); };
     </script>
 </body>
 </html>
+
 
 
 
