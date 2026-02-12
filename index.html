@@ -1556,8 +1556,10 @@ body.theme-green {
     </div>
 </div>
 
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <h2 style="margin-top:0; color: var(--accent); letter-spacing: 2px; font-size: 18px; text-transform: uppercase;">Settings</h2>
+<div class="modal-overlay" id="settings-modal" onclick="hideSettings()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2 style="margin-top:0; color: var(--accent); letter-spacing: 2px; font-size: 18px; text-transform: uppercase;">Settings</h2>
+
             
             <span class="section-label">General</span>
 <button class="setting-btn primary" onclick="openAboutBlank()">Open in About:Blank</button>
@@ -1618,10 +1620,13 @@ body.theme-green {
 
             <button class="setting-btn" onclick="hideSettings()" style="margin-top: 20px; border: none; background: transparent; opacity: 0.6; text-transform: none; letter-spacing: 0;">
                 Close
-            </button>
+             </button>
         </div>
     </div>
+</div>  <!-- Close settings-modal -->
+
 <div class="modal-overlay" id="games-modal" onclick="hideGames()">
+
     <div class="modal-content" onclick="event.stopPropagation()">
         <h2 style="margin-top:0; color: var(--accent); letter-spacing: 2px; font-size: 18px; text-transform: uppercase;">Games</h2>
         
@@ -2390,26 +2395,7 @@ function openGame(url) {
             document.body.appendChild(ripple);
             setTimeout(() => ripple.remove(), 600);
         });
-// Navbar toggle keybind (Ctrl + K)
-let navbarHidden = false;
 
-document.addEventListener('keydown', (e) => {
-    // Check for Ctrl + K (or Cmd + K on Mac)
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault(); // Prevent default browser behavior
-        
-        navbarHidden = !navbarHidden;
-        
-        if (navbarHidden) {
-            document.body.classList.add('nav-hidden');
-        } else {
-            document.body.classList.remove('nav-hidden');
-        }
-        
-        // Optional: Show a quick notification
-        showNotification(navbarHidden ? 'Navigation Hidden (Ctrl+K to show)' : 'Navigation Visible');
-    }
-});
 
 // Quick notification function
 function showNotification(message) {
@@ -2535,7 +2521,18 @@ function showNotification(message) {
             document.getElementById('bar').focus();
             document.getElementById('bar').select();
         }
+
+        // Navbar toggle keybind (Ctrl + K)
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            const navbarHidden = document.body.classList.toggle('nav-hidden');
+            showNotification(navbarHidden ? 'Navigation Hidden (Ctrl+K to show)' : 'Navigation Visible');
+        }
+
+        
     });
+
+            
 };  // <-- THIS CLOSES window.onload
 
 
@@ -2543,6 +2540,7 @@ document.getElementById('bar').onkeydown = (e) => { if(e.key === 'Enter') nav();
     </script>
 </body>
 </html>
+
 
 
 
