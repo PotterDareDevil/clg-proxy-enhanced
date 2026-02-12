@@ -1297,34 +1297,20 @@ function animateCursor() {
     requestAnimationFrame(animateCursor);
 }
 animateCursor();
-// Hide cursor when iframe is focused
-let lastActiveElement = document.activeElement;
+// Cursor toggle keybind (Ctrl + C)
+let cursorVisible = true;
 
-setInterval(() => {
-    const loginOverlay = document.getElementById('login-overlay');
-    const activeFrame = document.querySelector('iframe.active');
-    
-    // Always show cursor on login screen
-    if (loginOverlay && loginOverlay.style.display === 'flex') {
-        cursorDot.style.opacity = '1';
-        return;
-    }
-    
-    // Check if cursor is over the iframe area
-    if (activeFrame) {
-        const rect = activeFrame.getBoundingClientRect();
-        const isOverIframe = mouseX >= rect.left && 
-                           mouseX <= rect.right && 
-                           mouseY >= rect.top && 
-                           mouseY <= rect.bottom;
+document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+        e.preventDefault();
         
-        if (isOverIframe) {
-            cursorDot.style.opacity = '0';
-        } else {
-            cursorDot.style.opacity = '1';
-        }
+        cursorVisible = !cursorVisible;
+        cursorDot.style.opacity = cursorVisible ? '1' : '0';
+        
+        showNotification(cursorVisible ? 'Custom Cursor Enabled' : 'Custom Cursor Hidden');
     }
-}, 100);
+});
+
 
 // Also hide when clicking into iframe
 document.addEventListener('mousedown', (e) => {
@@ -1464,6 +1450,7 @@ function showNotification(message) {
     </script>
 </body>
 </html>
+
 
 
 
