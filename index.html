@@ -544,6 +544,189 @@ body.nav-hidden .frame-container { top: 0 !important; }
     transform: translateY(-2px);
 }
 
+        /* History Panel */
+.history-panel {
+    position: fixed;
+    right: -350px;
+    top: 0;
+    bottom: 0;
+    width: 350px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px) saturate(180%);
+    border-left: 1px solid var(--border);
+    z-index: 100001;
+    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.history-panel.open {
+    right: 0;
+}
+
+.history-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.history-header h2 {
+    margin: 0;
+    color: var(--accent);
+    font-size: 18px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.history-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 24px;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.history-close:hover {
+    background: rgba(255, 96, 92, 0.2);
+    color: #ff605c;
+    transform: rotate(90deg);
+}
+
+.history-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.history-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.history-content::-webkit-scrollbar-track {
+    background: var(--bg-color);
+}
+
+.history-content::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 3px;
+}
+
+.history-item {
+    padding: 12px;
+    margin: 5px 0;
+    background: rgba(0, 217, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.history-item:hover {
+    background: rgba(0, 217, 255, 0.1);
+    border-color: var(--accent);
+    transform: translateX(-5px);
+}
+
+.history-item .favicon {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.history-item .info {
+    flex: 1;
+    min-width: 0;
+}
+
+.history-item .title {
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.history-item .url {
+    color: var(--text-muted);
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.history-item .time {
+    color: var(--text-muted);
+    font-size: 10px;
+    flex-shrink: 0;
+}
+
+.history-actions {
+    padding: 15px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+}
+
+.history-btn {
+    flex: 1;
+    padding: 10px;
+    background: rgba(0, 217, 255, 0.1);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    color: var(--accent);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.history-btn:hover {
+    background: rgba(0, 217, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.history-btn.danger {
+    border-color: #ff605c;
+    color: #ff605c;
+    background: rgba(255, 96, 92, 0.1);
+}
+
+.history-btn.danger:hover {
+    background: rgba(255, 96, 92, 0.2);
+}
+
+.history-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+/* Tab Dragging */
+.tab.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+}
+
+.tab.drag-over {
+    border-left: 2px solid var(--accent);
+}
+
 
         @keyframes fadeInUp {
             from {
@@ -962,6 +1145,10 @@ body.theme-green {
         <input type="text" placeholder="Search with Brave or enter URL" id="bar" autocomplete="off">
     </div>
     <div class="nav-buttons">
+         <!-- HISTORY BUTTON -->
+    <div class="nav-button magnetic-btn" onclick="toggleHistory()" style="position: relative;">
+        📜
+    </div>
         <!-- ADD THIS GAMES BUTTON HERE: -->
         <div class="nav-button magnetic-btn" onclick="showGames()" style="position: relative;">
             🎮
@@ -998,7 +1185,23 @@ body.theme-green {
         © 2026 <a href="https://chunglloyd.xyc" target="_blank">chunglloyd.xyc</a> | CLG Proxy
     </footer>
 
+<!-- History Panel -->
+<div class="history-panel" id="history-panel">
+    <div class="history-header">
+        <h2>History</h2>
+        <button class="history-close" onclick="toggleHistory()">×</button>
+    </div>
+    <div class="history-content" id="history-content">
+        <div class="history-empty">No browsing history yet</div>
+    </div>
+    <div class="history-actions">
+        <button class="history-btn danger" onclick="clearHistory()">Clear All</button>
+    </div>
+</div>
 
+<div class="modal-overlay" id="settings-modal" onclick="hideSettings()">
+
+    
     <div class="modal-overlay" id="settings-modal" onclick="hideSettings()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <h2 style="margin-top:0; color: var(--accent); letter-spacing: 2px; font-size: 18px; text-transform: uppercase;">Settings</h2>
@@ -1180,6 +1383,173 @@ document.addEventListener('keydown', (e) => {
         document.getElementById('panic-screen').classList.toggle('active', panicActive);
     }
 });
+
+            // History System
+let browsingHistory = JSON.parse(localStorage.getItem('clg-history') || '[]');
+
+function addToHistory(url, title) {
+    if (!url || url === '') return;
+    
+    const entry = {
+        url,
+        title,
+        timestamp: Date.now()
+    };
+    
+    // Remove duplicates
+    browsingHistory = browsingHistory.filter(h => h.url !== url);
+    
+    // Add to beginning
+    browsingHistory.unshift(entry);
+    
+    // Keep only last 100 entries
+    if (browsingHistory.length > 100) {
+        browsingHistory = browsingHistory.slice(0, 100);
+    }
+    
+    localStorage.setItem('clg-history', JSON.stringify(browsingHistory));
+    renderHistory();
+}
+
+function renderHistory() {
+    const content = document.getElementById('history-content');
+    
+    if (browsingHistory.length === 0) {
+        content.innerHTML = '<div class="history-empty">No browsing history yet</div>';
+        return;
+    }
+    
+    content.innerHTML = browsingHistory.map(entry => {
+        const date = new Date(entry.timestamp);
+        const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        
+        return `
+            <div class="history-item" onclick="openFromHistory('${entry.url.replace(/'/g, "\\'")}')">
+                <img class="favicon" src="https://www.google.com/s2/favicons?domain=${entry.url}&sz=32" onerror="this.style.display='none'">
+                <div class="info">
+                    <div class="title">${entry.title}</div>
+                    <div class="url">${entry.url}</div>
+                </div>
+                <div class="time">${timeStr}<br>${dateStr}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function openFromHistory(url) {
+    document.getElementById('bar').value = url;
+    nav();
+    toggleHistory();
+}
+
+function clearHistory() {
+    if (!confirm('Clear all browsing history?')) return;
+    browsingHistory = [];
+    localStorage.setItem('clg-history', JSON.stringify(browsingHistory));
+    renderHistory();
+    showNotification('History cleared');
+}
+
+function toggleHistory() {
+    const panel = document.getElementById('history-panel');
+    panel.classList.toggle('open');
+    if (panel.classList.contains('open')) {
+        renderHistory();
+    }
+}
+
+// Tab Persistence
+function saveTabs() {
+    const tabData = tabs.map(tab => ({
+        url: tab.url,
+        title: tab.title
+    }));
+    localStorage.setItem('clg-tabs', JSON.stringify(tabData));
+    localStorage.setItem('clg-active-tab', activeTabId);
+}
+
+function loadSavedTabs() {
+    const savedTabs = localStorage.getItem('clg-tabs');
+    if (!savedTabs) return false;
+    
+    try {
+        const tabData = JSON.parse(savedTabs);
+        if (tabData.length === 0) return false;
+        
+        tabData.forEach((data, index) => {
+            if (index === 0) {
+                // First tab already created in createNewTab
+                const tab = tabs[0];
+                if (data.url) {
+                    tab.url = data.url;
+                    tab.title = data.title;
+                    document.getElementById(`frame-${tab.id}`).src = scramjet.encodeUrl(data.url);
+                }
+            } else {
+                // Create additional tabs
+                const id = Date.now() + Math.random();
+                tabs.push({ id, url: data.url, title: data.title, loading: false });
+                const frame = document.createElement('iframe');
+                frame.id = `frame-${id}`;
+                if (data.url) {
+                    frame.src = scramjet.encodeUrl(data.url);
+                }
+                document.getElementById('frame-container').appendChild(frame);
+            }
+        });
+        
+        renderTabs();
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+// Tab Dragging
+let draggedTab = null;
+
+function makeDraggable(tabEl, tabId) {
+    tabEl.draggable = true;
+    
+    tabEl.addEventListener('dragstart', (e) => {
+        draggedTab = tabId;
+        tabEl.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+    });
+    
+    tabEl.addEventListener('dragend', () => {
+        tabEl.classList.remove('dragging');
+        document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+    });
+    
+    tabEl.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (draggedTab !== tabId) {
+            tabEl.classList.add('drag-over');
+        }
+    });
+    
+    tabEl.addEventListener('dragleave', () => {
+        tabEl.classList.remove('drag-over');
+    });
+    
+    tabEl.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if (draggedTab !== tabId) {
+            const draggedIndex = tabs.findIndex(t => t.id === draggedTab);
+            const targetIndex = tabs.findIndex(t => t.id === tabId);
+            
+            const [removed] = tabs.splice(draggedIndex, 1);
+            tabs.splice(targetIndex, 0, removed);
+            
+            renderTabs();
+            saveTabs();
+        }
+        tabEl.classList.remove('drag-over');
+    });
+}
         
             // Login System
         const SITE_PASSWORD = "clifford2026"; // Change this to whatever you want
@@ -1408,32 +1778,37 @@ document.addEventListener('keydown', (e) => {
 
 
         function renderTabs() {
-            const strip = document.getElementById('tab-strip');
-            const addBtn = strip.querySelector('.nav-button');
-            strip.querySelectorAll('.tab').forEach(t => t.remove());
-            tabs.forEach(tab => {
-                const tabEl = document.createElement('div');
-                tabEl.className = `tab ${tab.id === activeTabId ? 'active' : ''}`;
-                tabEl.onclick = () => switchTab(tab.id);
-                tabEl.innerHTML = `<span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${tab.title}</span><button class="close-tab-btn" onclick="closeTab(event, ${tab.id})">×</button>`;
-                strip.insertBefore(tabEl, addBtn);
-            });
-            updateHoverTargets();
-        }
+    const strip = document.getElementById('tab-strip');
+    const addBtn = strip.querySelector('.nav-button');
+    strip.querySelectorAll('.tab').forEach(t => t.remove());
+    tabs.forEach(tab => {
+        const tabEl = document.createElement('div');
+        tabEl.className = `tab ${tab.id === activeTabId ? 'active' : ''}`;
+        tabEl.onclick = () => switchTab(tab.id);
+        tabEl.innerHTML = `<span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${tab.title}</span><button class="close-tab-btn" onclick="closeTab(event, ${tab.id})">×</button>`;
+        strip.insertBefore(tabEl, addBtn);
+        makeDraggable(tabEl, tab.id); // ADD THIS LINE
+    });
+    updateHoverTargets();
+}
+
 
 
         function nav() {
-            const val = document.getElementById('bar').value.trim();
-            if(!val) return;
-            document.activeElement.blur(); 
-            showBH();
-            let url = (val.includes('.') && !val.includes(' ')) ? (val.startsWith('http') ? val : 'https://' + val) : `https://search.brave.com/search?q=${encodeURIComponent(val)}`;
-            const tab = tabs.find(t => t.id === activeTabId);
-            tab.url = url; tab.title = url.split('/')[2] || url;
-            document.getElementById(`frame-${activeTabId}`).src = scramjet.encodeUrl(url);
-            document.getElementById('new-tab-ui').style.display = 'none';
-            renderTabs();
-        }
+    const val = document.getElementById('bar').value.trim();
+    if(!val) return;
+    document.activeElement.blur(); 
+    showBH();
+    let url = (val.includes('.') && !val.includes(' ')) ? (val.startsWith('http') ? val : 'https://' + val) : `https://search.brave.com/search?q=${encodeURIComponent(val)}`;
+    const tab = tabs.find(t => t.id === activeTabId);
+    tab.url = url; tab.title = url.split('/')[2] || url;
+    document.getElementById(`frame-${activeTabId}`).src = scramjet.encodeUrl(url);
+    document.getElementById('new-tab-ui').style.display = 'none';
+    renderTabs();
+    addToHistory(url, tab.title); // ADD THIS LINE
+    saveTabs(); // ADD THIS LINE
+}
+
 
 
         function reloadPage() {
@@ -1477,7 +1852,15 @@ document.addEventListener('keydown', (e) => {
         }
 
 
-        function closeTab(e, id) { e.stopPropagation(); if(tabs.length === 1) return; tabs = tabs.filter(t => t.id !== id); document.getElementById(`frame-${id}`).remove(); if(activeTabId === id) switchTab(tabs[0].id); else renderTabs(); }
+        function closeTab(e, id) { 
+    e.stopPropagation(); 
+    if(tabs.length === 1) return; 
+    tabs = tabs.filter(t => t.id !== id); 
+    document.getElementById(`frame-${id}`).remove(); 
+    if(activeTabId === id) switchTab(tabs[0].id); 
+    else renderTabs();
+    saveTabs(); // ADD THIS LINE
+}
         function showSettings() { document.getElementById('settings-modal').classList.add('show'); refreshAllPings(); }
         function hideSettings() { document.getElementById('settings-modal').classList.remove('show'); }
         function goBack() { try { document.getElementById(`frame-${activeTabId}`).contentWindow.history.back(); } catch(e){} }
@@ -1641,7 +2024,12 @@ function showNotification(message) {
     loadWispSettings();
     initProxy();
     scramjet.init();
-    createNewTab(); 
+    
+    // Try to load saved tabs, if none create new tab
+    if (!loadSavedTabs()) {
+        createNewTab();
+    }
+    
     refreshAllPings();
     loadBookmarks();
     setTimeout(hideBH, 1000);
@@ -1687,6 +2075,7 @@ function showNotification(message) {
     </script>
 </body>
 </html>
+
 
 
 
