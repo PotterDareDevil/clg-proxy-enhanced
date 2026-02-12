@@ -55,7 +55,8 @@
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
                 height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                 background 0.3s ease,
-                box-shadow 0.3s ease;
+                box-shadow 0.3s ease,
+                opacity 0.2s ease; 
 }
 
 
@@ -1137,6 +1138,68 @@ function animateCursor() {
 }
 animateCursor();
 
+        function animateCursor() {
+    dotX += (mouseX - dotX) * 0.2;
+    dotY += (mouseY - dotY) * 0.2;
+    cursorDot.style.left = dotX + 'px';
+    cursorDot.style.top = dotY + 'px';
+
+    requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+// PASTE THE NEW CODE HERE:
+// Hide cursor when iframe is focused
+let lastActiveElement = document.activeElement;
+
+setInterval(() => {
+    const activeFrame = document.querySelector('iframe.active');
+    
+    // Check if cursor is over the iframe area
+    if (activeFrame) {
+        const rect = activeFrame.getBoundingClientRect();
+        const isOverIframe = mouseX >= rect.left && 
+                           mouseX <= rect.right && 
+                           mouseY >= rect.top && 
+                           mouseY <= rect.bottom;
+        
+        if (isOverIframe) {
+            cursorDot.style.opacity = '0';
+        } else {
+            cursorDot.style.opacity = '1';
+        }
+    }
+}, 100);
+
+// Also hide when clicking into iframe
+document.addEventListener('mousedown', (e) => {
+    const activeFrame = document.querySelector('iframe.active');
+    if (activeFrame) {
+        const rect = activeFrame.getBoundingClientRect();
+        if (e.clientX >= rect.left && e.clientX <= rect.right && 
+            e.clientY >= rect.top && e.clientY <= rect.bottom) {
+            cursorDot.style.opacity = '0';
+        }
+    }
+});
+
+// Show cursor when mouse enters navbar or footer
+document.querySelector('.navbar').addEventListener('mouseenter', () => {
+    cursorDot.style.opacity = '1';
+});
+
+document.querySelector('footer').addEventListener('mouseenter', () => {
+    cursorDot.style.opacity = '1';
+});
+
+document.querySelector('.tab-strip').addEventListener('mouseenter', () => {
+    cursorDot.style.opacity = '1';
+});
+
+// THEN YOUR EXISTING updateHoverTargets() function continues below...
+function updateHoverTargets() {
+
+
 
         function updateHoverTargets() {
             const hoverTargets = document.querySelectorAll('button, a, input, .nav-button, .tab, .setting-btn, .close-tab-btn');
@@ -1244,6 +1307,7 @@ function showNotification(message) {
     </script>
 </body>
 </html>
+
 
 
 
