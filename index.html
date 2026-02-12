@@ -435,6 +435,43 @@ body.nav-hidden .frame-container { top: 0 !important; }
             color: var(--text-muted);
         }
 
+        /* Search Engine Picker */
+.search-engine-picker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 8px;
+    border-right: 1px solid var(--border);
+    margin-right: 8px;
+}
+
+.search-engine-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 217, 255, 0.05);
+    border: 1px solid transparent;
+    transition: all 0.3s;
+    font-size: 12px;
+    opacity: 0.5;
+}
+
+.search-engine-btn:hover {
+    opacity: 1;
+    border-color: var(--accent);
+    background: rgba(0, 217, 255, 0.1);
+    transform: scale(1.1);
+}
+
+.search-engine-btn.active {
+    opacity: 1;
+    border-color: var(--accent);
+    background: rgba(0, 217, 255, 0.2);
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+}
 
         .frame-container { 
             position: absolute; top: 108px; left: 0; right: 0; bottom: 0; 
@@ -1468,15 +1505,30 @@ body.theme-green {
         <img src="clg-bunny.png" alt="CLG" class="logo-bunny">
         <span class="logo-text">CLG</span>
     </div>
-    <div class="nav-buttons">
+        <div class="nav-buttons">
         <div class="nav-button magnetic-btn" onclick="goBack()">←</div>
         <div class="nav-button magnetic-btn" onclick="goForward()">→</div>
         <div class="nav-button magnetic-btn" onclick="reloadPage()">↻</div>
     </div>
     <div class="search-container">
+        <div class="search-engine-picker">
+            <div class="search-engine-btn active" data-engine="brave" onclick="setSearchEngine('brave')" title="Brave Search">
+                🦁
+            </div>
+            <div class="search-engine-btn" data-engine="google" onclick="setSearchEngine('google')" title="Google">
+                G
+            </div>
+            <div class="search-engine-btn" data-engine="duckduckgo" onclick="setSearchEngine('duckduckgo')" title="DuckDuckGo">
+                🦆
+            </div>
+            <div class="search-engine-btn" data-engine="bing" onclick="setSearchEngine('bing')" title="Bing">
+                B
+            </div>
+        </div>
         <input type="text" placeholder="Search with Brave or enter URL" id="bar" autocomplete="off">
     </div>
     <div class="nav-buttons">
+
          <!-- HISTORY BUTTON -->
     <div class="nav-button magnetic-btn" onclick="toggleHistory()" style="position: relative;">
         📜
@@ -2001,6 +2053,36 @@ function quickNav(url) {
 setInterval(updateClock, 1000);
 updateClock();
 
+            // Search Engine System
+let currentSearchEngine = localStorage.getItem('clg-search-engine') || 'brave';
+
+const searchEngines = {
+    brave: { url: 'https://search.brave.com/search?q=', name: 'Brave' },
+    google: { url: 'https://www.google.com/search?q=', name: 'Google' },
+    duckduckgo: { url: 'https://duckduckgo.com/?q=', name: 'DuckDuckGo' },
+    bing: { url: 'https://www.bing.com/search?q=', name: 'Bing' }
+};
+
+function setSearchEngine(engine) {
+    currentSearchEngine = engine;
+    localStorage.setItem('clg-search-engine', engine);
+    
+    // Update active state
+    document.querySelectorAll('.search-engine-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`[data-engine="${engine}"]`).classList.add('active');
+    
+    // Update placeholder
+    document.getElementById('bar').placeholder = `Search with ${searchEngines[engine].name} or enter URL`;
+    
+    showNotification(`Search Engine: ${searchEngines[engine].name}`);
+}
+
+// Load saved search engine on page load
+function loadSearchEngine() {
+    setSearchEngine(currentSearchEngine);
+}
 
             
             // Login System
@@ -2255,8 +2337,9 @@ updateClock();
     document.activeElement.blur(); 
     showBH();
     showProgress();
-    let url = (val.includes('.') && !val.includes(' ')) ? (val.startsWith('http') ? val : 'https://' + val) : `https://search.brave.com/search?q=${encodeURIComponent(val)}`;
+    let url = (val.includes('.') && !val.includes(' ')) ? (val.startsWith('http') ? val : 'https://' + val) : `${searchEngines[currentSearchEngine].url}${encodeURIComponent(val)}`;
     const tab = tabs.find(t => t.id === activeTabId);
+
     tab.url = url; 
     tab.title = url.split('/')[2] || url;
     
@@ -2450,7 +2533,9 @@ function showNotification(message) {
     
     refreshAllPings();
     loadBookmarks();
+    loadSearchEngine();
     setTimeout(hideBH, 1000);
+
     
     // Custom Cursor Logic - Initialize after page loads
     const cursorDot = document.querySelector('.cursor-dot');
@@ -2548,6 +2633,7 @@ document.getElementById('bar').onkeydown = (e) => { if(e.key === 'Enter') nav();
     </script>
 </body>
 </html>
+
 
 
 
