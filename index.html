@@ -57,22 +57,7 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Custom Cursor with trail glow */
-        .cursor-dot {
-            position: fixed;
-            width: 8px;
-            height: 8px;
-            background: var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 999999;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 15px var(--accent), 0 0 5px rgba(0, 217, 255, 0.5);
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-                        height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                        background 0.3s ease,
-                        box-shadow 0.3s ease;
-        }
+        
 
         .cursor-dot.hover {
             width: 40px;
@@ -1042,38 +1027,26 @@
         function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
 
 
-        // Custom Cursor Logic with trail
-        const cursorDot = document.querySelector('.cursor-dot');
-        let mouseX = 0, mouseY = 0;
-        let dotX = 0, dotY = 0;
-        let trailTimer;
+        // Custom Cursor Logic - Clean
+const cursorDot = document.querySelector('.cursor-dot');
+let mouseX = 0, mouseY = 0;
+let dotX = 0, dotY = 0;
 
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
+document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
 
-            // Cursor trail effect
-            clearTimeout(trailTimer);
-            trailTimer = setTimeout(() => {
-                const trail = document.createElement('div');
-                trail.className = 'cursor-trail';
-                trail.style.left = mouseX + 'px';
-                trail.style.top = mouseY + 'px';
-                trail.style.transform = 'translate(-50%, -50%)';
-                document.body.appendChild(trail);
-                setTimeout(() => trail.remove(), 500);
-            }, 30);
-        });
+function animateCursor() {
+    dotX += (mouseX - dotX) * 0.2;
+    dotY += (mouseY - dotY) * 0.2;
+    cursorDot.style.left = dotX + 'px';
+    cursorDot.style.top = dotY + 'px';
 
-        function animateCursor() {
-            dotX += (mouseX - dotX) * 0.2;
-            dotY += (mouseY - dotY) * 0.2;
-            cursorDot.style.left = dotX + 'px';
-            cursorDot.style.top = dotY + 'px';
+    requestAnimationFrame(animateCursor);
+}
+animateCursor();
 
-            requestAnimationFrame(animateCursor);
-        }
-        animateCursor();
 
         function updateHoverTargets() {
             const hoverTargets = document.querySelectorAll('button, a, input, .nav-button, .tab, .setting-btn, .close-tab-btn');
@@ -1129,3 +1102,4 @@
     </script>
 </body>
 </html>
+
