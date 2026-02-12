@@ -1,6 +1,6 @@
-# Zyron Proxy
+# Chunglloyd Proxy
 
-Zyron Proxy is a lightweight, fast, and powerful self-hosted web proxy built on the Scramjet ecosystem.  
+Chunglloyd Proxy is a lightweight, fast, and powerful self-hosted web proxy built on the Scramjet ecosystem.  
 It provides a modular, minimal setup with all essential components included.
 
 ## Features
@@ -21,14 +21,10 @@ It provides a modular, minimal setup with all essential components included.
 
 ## Hosting
 
-Zyron can be hosted on Netlify, Vercel, Cloudflare Pages, or similar static hosting platforms.  
+CLG can be hosted on Netlify, Vercel, Cloudflare Pages, or similar static hosting platforms.  
 All three have been tested and work.
 
 ### Example Deployment
 
-- https://ixlmathteacherpanel.wikidelia.net
+- https://clg-proxy-enhanced.vercel.app/
 
-## Support
-
-For help, questions, or support, join the Discord:  
-https://discord.gg/nTFeCzNr9W
