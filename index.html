@@ -951,8 +951,6 @@
     </div>
 </div>
 
-
-    <script>
         <script>
         // Login System
         const SITE_PASSWORD = "clifford2026"; // Change this to whatever you want
@@ -1312,17 +1310,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 
-// Also hide when clicking into iframe
-document.addEventListener('mousedown', (e) => {
-    const activeFrame = document.querySelector('iframe.active');
-    if (activeFrame) {
-        const rect = activeFrame.getBoundingClientRect();
-        if (e.clientX >= rect.left && e.clientX <= rect.right && 
-            e.clientY >= rect.top && e.clientY <= rect.bottom) {
-            cursorDot.style.opacity = '0';
-        }
-    }
-});
+
 
 
 
@@ -1427,29 +1415,13 @@ function showNotification(message) {
     createNewTab(); 
     refreshAllPings(); 
     setTimeout(hideBH, 1000);
-    
-    // Show cursor on UI elements (add after page loads)
-    document.querySelector('.navbar').addEventListener('mouseenter', () => {
-        cursorDot.style.opacity = '1';
-    });
-
-    document.querySelector('footer').addEventListener('mouseenter', () => {
-        cursorDot.style.opacity = '1';
-    });
-
-    document.querySelector('.tab-strip').addEventListener('mouseenter', () => {
-        cursorDot.style.opacity = '1';
-    });
-
-    document.querySelector('.new-tab-screen').addEventListener('mouseenter', () => {
-        cursorDot.style.opacity = '1';
-    });
 };
 
         document.getElementById('bar').onkeydown = (e) => { if(e.key === 'Enter') nav(); };
     </script>
 </body>
 </html>
+
 
 
 
