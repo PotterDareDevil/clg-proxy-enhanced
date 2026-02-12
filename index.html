@@ -41,6 +41,24 @@
             cursor: none !important;
         }
 
+        /* Custom Cursor with trail glow */
+.cursor-dot {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 999999;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 15px var(--accent), 0 0 5px rgba(0, 217, 255, 0.5);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                background 0.3s ease,
+                box-shadow 0.3s ease;
+}
+
+
         body, html {
             margin: 0; padding: 0; height: 100%;
             font-family: 'Space Grotesk', sans-serif;
@@ -1102,4 +1120,5 @@ animateCursor();
     </script>
 </body>
 </html>
+
 
