@@ -57,62 +57,56 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Custom Cursor */
-        .cursor {
-            position: fixed;
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 999999;
-            transition: all 0.15s ease;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 20px rgba(0, 217, 255, 0.4), inset 0 0 20px rgba(0, 217, 255, 0.2);
-        }
+        /* Custom Cursor - Simplified */
+.cursor-dot {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 999999;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 15px var(--accent), 0 0 5px rgba(0, 217, 255, 0.5);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                background 0.3s ease,
+                box-shadow 0.3s ease;
+}
 
-        .cursor-dot {
-            position: fixed;
-            width: 6px;
-            height: 6px;
-            background: var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 999999;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 10px var(--accent);
-        }
+.cursor-dot.hover {
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 217, 255, 0.2);
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 30px rgba(0, 217, 255, 0.8), 
+                0 0 15px rgba(0, 217, 255, 0.5),
+                inset 0 0 15px rgba(0, 217, 255, 0.3);
+}
 
-        .cursor.hover {
-            width: 60px;
-            height: 60px;
-            background: rgba(0, 217, 255, 0.1);
-            border-width: 3px;
-            box-shadow: 0 0 30px rgba(0, 217, 255, 0.6), inset 0 0 30px rgba(0, 217, 255, 0.3);
-        }
+/* Click ripple effect */
+.ripple {
+    position: fixed;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 999998;
+    animation: rippleEffect 0.6s ease-out;
+}
 
-        /* Click ripple effect */
-        .ripple {
-            position: fixed;
-            border: 2px solid var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 999998;
-            animation: rippleEffect 0.6s ease-out;
-        }
+@keyframes rippleEffect {
+    0% {
+        width: 20px;
+        height: 20px;
+        opacity: 1;
+    }
+    100% {
+        width: 100px;
+        height: 100px;
+        opacity: 0;
+    }
+}
 
-        @keyframes rippleEffect {
-            0% {
-                width: 20px;
-                height: 20px;
-                opacity: 1;
-            }
-            100% {
-                width: 100px;
-                height: 100px;
-                opacity: 0;
-            }
-        }
 
         /* Floating particles background */
         body::before {
@@ -485,8 +479,8 @@
 <body>
 
     <!-- Custom Cursor -->
-    <div class="cursor"></div>
-    <div class="cursor-dot"></div>
+<div class="cursor-dot"></div>
+
 
     <div id="loading-screen"><div class="black-hole"></div></div>
 
@@ -595,17 +589,59 @@
 
 
     <script>
-        // Custom Cursor Logic
-        const cursor = document.querySelector('.cursor');
-        const cursorDot = document.querySelector('.cursor-dot');
-        let mouseX = 0, mouseY = 0;
-        let cursorX = 0, cursorY = 0;
-        let dotX = 0, dotY = 0;
+        // Custom Cursor Logic - Simplified
+const cursorDot = document.querySelector('.cursor-dot');
+let mouseX = 0, mouseY = 0;
+let dotX = 0, dotY = 0;
 
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
+document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+
+function animateCursor() {
+    // Smooth easing for cursor dot
+    dotX += (mouseX - dotX) * 0.2;
+    dotY += (mouseY - dotY) * 0.2;
+    cursorDot.style.left = dotX + 'px';
+    cursorDot.style.top = dotY + 'px';
+
+    requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+// Dynamic hover effect on interactive elements
+function updateHoverTargets() {
+    const hoverTargets = document.querySelectorAll('button, a, input, .nav-button, .tab, .setting-btn, .close-tab-btn');
+    hoverTargets.forEach(target => {
+        target.addEventListener('mouseenter', () => {
+            cursorDot.classList.add('hover');
         });
+        target.addEventListener('mouseleave', () => {
+            cursorDot.classList.remove('hover');
+        });
+    });
+}
+updateHoverTargets();
+
+// Update hover targets when tabs are created/changed
+const originalRenderTabs = renderTabs;
+renderTabs = function() {
+    originalRenderTabs();
+    updateHoverTargets();
+};
+
+// Click ripple effect
+document.addEventListener('click', (e) => {
+    const ripple = document.createElement('div');
+    ripple.className = 'ripple';
+    ripple.style.left = e.clientX + 'px';
+    ripple.style.top = e.clientY + 'px';
+    ripple.style.transform = 'translate(-50%, -50%)';
+    document.body.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+});
+
 
         function animateCursor() {
             // Smooth easing for main cursor
@@ -907,3 +943,4 @@
     </script>
 </body>
 </html>
+
