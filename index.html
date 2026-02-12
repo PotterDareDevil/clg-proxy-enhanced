@@ -1301,7 +1301,14 @@ animateCursor();
 let lastActiveElement = document.activeElement;
 
 setInterval(() => {
+    const loginOverlay = document.getElementById('login-overlay');
     const activeFrame = document.querySelector('iframe.active');
+    
+    // Always show cursor on login screen
+    if (loginOverlay && loginOverlay.style.display === 'flex') {
+        cursorDot.style.opacity = '1';
+        return;
+    }
     
     // Check if cursor is over the iframe area
     if (activeFrame) {
@@ -1457,6 +1464,7 @@ function showNotification(message) {
     </script>
 </body>
 </html>
+
 
 
 
