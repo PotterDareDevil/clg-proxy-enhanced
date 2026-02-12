@@ -1502,6 +1502,7 @@ body.theme-green {
 </div>  <!-- Close #top-ui -->
 
     
+    <div class="frame-container" id="frame-container">
     <div id="new-tab-ui" class="new-tab-screen">
     <div class="widget-container">
         <div class="new-tab-content">
@@ -1534,7 +1535,7 @@ body.theme-green {
         </div>
     </div>
 </div>
-
+</div>  <!-- Close frame-container -->
 
 
     <footer>
@@ -1555,10 +1556,6 @@ body.theme-green {
     </div>
 </div>
 
-<div class="modal-overlay" id="settings-modal" onclick="hideSettings()">
-
-    
-    <div class="modal-overlay" id="settings-modal" onclick="hideSettings()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <h2 style="margin-top:0; color: var(--accent); letter-spacing: 2px; font-size: 18px; text-transform: uppercase;">Settings</h2>
             
@@ -1999,50 +1996,6 @@ function quickNav(url) {
 setInterval(updateClock, 1000);
 updateClock();
 
-// Global keyboard shortcuts
-document.addEventListener('keydown', (e) => {
-    // Show shortcuts panel with "?"
-    if (e.key === '?' && !e.ctrlKey && !e.altKey && !e.metaKey) {
-        const activeEl = document.activeElement;
-        if (activeEl.tagName !== 'INPUT' && activeEl.tagName !== 'TEXTAREA') {
-            e.preventDefault();
-            showShortcuts();
-        }
-    }
-    
-    // Close shortcuts with Escape
-    if (e.key === 'Escape') {
-        hideShortcuts();
-    }
-    
-    // New tab (Ctrl+T)
-    if ((e.ctrlKey || e.metaKey) && e.key === 't') {
-        e.preventDefault();
-        createNewTab();
-    }
-    
-    // Close tab (Ctrl+W)
-    if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
-        e.preventDefault();
-        if (tabs.length > 1) {
-            const event = { stopPropagation: () => {} };
-            closeTab(event, activeTabId);
-        }
-    }
-    
-    // Reload (Ctrl+R)
-    if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
-        e.preventDefault();
-        reloadPage();
-    }
-    
-    // Focus search bar (Ctrl+L)
-    if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
-        e.preventDefault();
-        document.getElementById('bar').focus();
-        document.getElementById('bar').select();
-    }
-});
 
             
             // Login System
@@ -2390,38 +2343,7 @@ function openGame(url) {
 }
 
 
-        // Custom Cursor Logic - Clean
-const cursorDot = document.querySelector('.cursor-dot');
-let mouseX = 0, mouseY = 0;
-let dotX = 0, dotY = 0;
-
-document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-});
-
-function animateCursor() {
-    dotX += (mouseX - dotX) * 0.2;
-    dotY += (mouseY - dotY) * 0.2;
-    cursorDot.style.left = dotX + 'px';
-    cursorDot.style.top = dotY + 'px';
-
-    requestAnimationFrame(animateCursor);
-}
-animateCursor();
-// Cursor toggle keybind (Ctrl + C)
-let cursorVisible = true;
-
-document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
-        e.preventDefault();
-        
-        cursorVisible = !cursorVisible;
-        cursorDot.style.opacity = cursorVisible ? '1' : '0';
-        
-        showNotification(cursorVisible ? 'Custom Cursor Enabled' : 'Custom Cursor Hidden');
-    }
-});
+       
 
 
 
@@ -2556,7 +2478,7 @@ function showNotification(message) {
     }
     animateCursor();
     
-    // Cursor toggle keybind (Ctrl + C)
+        // Cursor toggle keybind (Ctrl + C)
     let cursorVisible = true;
 
     document.addEventListener('keydown', (e) => {
@@ -2569,14 +2491,60 @@ function showNotification(message) {
             showNotification(cursorVisible ? 'Custom Cursor Enabled' : 'Custom Cursor Hidden');
         }
     });
-};
+    
+    // Global keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Show shortcuts panel with "?"
+        if (e.key === '?' && !e.ctrlKey && !e.altKey && !e.metaKey) {
+            const activeEl = document.activeElement;
+            if (activeEl.tagName !== 'INPUT' && activeEl.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                showShortcuts();
+            }
+        }
+        
+        // Close shortcuts with Escape
+        if (e.key === 'Escape') {
+            hideShortcuts();
+        }
+        
+        // New tab (Ctrl+T)
+        if ((e.ctrlKey || e.metaKey) && e.key === 't') {
+            e.preventDefault();
+            createNewTab();
+        }
+        
+        // Close tab (Ctrl+W)
+        if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+            e.preventDefault();
+            if (tabs.length > 1) {
+                const event = { stopPropagation: () => {} };
+                closeTab(event, activeTabId);
+            }
+        }
+        
+        // Reload (Ctrl+R)
+        if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+            e.preventDefault();
+            reloadPage();
+        }
+        
+        // Focus search bar (Ctrl+L)
+        if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
+            e.preventDefault();
+            document.getElementById('bar').focus();
+            document.getElementById('bar').select();
+        }
+    });
+};  // <-- THIS CLOSES window.onload
 
 
-
-        document.getElementById('bar').onkeydown = (e) => { if(e.key === 'Enter') nav(); };
+document.getElementById('bar').onkeydown = (e) => { if(e.key === 'Enter') nav(); };
     </script>
 </body>
 </html>
+
+
 
 
 
