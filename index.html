@@ -57,7 +57,7 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Custom Cursor - Simplified */
+        /* Custom Cursor with trail glow */
         .cursor-dot {
             position: fixed;
             width: 8px;
@@ -82,6 +82,26 @@
             box-shadow: 0 0 30px rgba(0, 217, 255, 0.8), 
                         0 0 15px rgba(0, 217, 255, 0.5),
                         inset 0 0 15px rgba(0, 217, 255, 0.3);
+        }
+
+        /* Cursor trail effect */
+        .cursor-trail {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 999998;
+            opacity: 0.6;
+            animation: trailFade 0.5s ease-out forwards;
+        }
+
+        @keyframes trailFade {
+            to {
+                opacity: 0;
+                transform: scale(2);
+            }
         }
 
         /* Click ripple effect */
@@ -142,6 +162,34 @@
             box-shadow: 0px 0px 40px 10px var(--accent), inset 0px 0px 10px #ffffff88; 
             position: relative; animation: breathe 3s infinite ease-in-out;
         }
+
+        /* Sound wave rings around loading */
+        .black-hole::before,
+        .black-hole::after {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            opacity: 0;
+            animation: soundWave 2s ease-out infinite;
+        }
+
+        .black-hole::after {
+            animation-delay: 1s;
+        }
+
+        @keyframes soundWave {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
         @keyframes breathe { 
             0%, 100% { transform: scale(1); box-shadow: 0px 0px 40px 10px var(--accent); } 
             50% { transform: scale(1.05); box-shadow: 0px 0px 60px 20px var(--accent); } 
@@ -152,7 +200,20 @@
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
             position: relative;
             z-index: 10;
+            animation: slideDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
         body.nav-hidden #top-ui { transform: translateY(-108px); }
         body.nav-hidden .frame-container { top: 0 !important; }
 
@@ -174,7 +235,13 @@
         .tab.active::after { 
             content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; 
             background: linear-gradient(90deg, transparent, var(--accent), transparent); 
-            box-shadow: 0 0 10px var(--accent); 
+            box-shadow: 0 0 10px var(--accent);
+            animation: shimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
         
         .close-tab-btn {
@@ -185,7 +252,8 @@
         }
         .close-tab-btn:hover { 
             background: rgba(255, 96, 92, 0.2); 
-            color: #ff605c; opacity: 1; 
+            color: #ff605c; opacity: 1;
+            transform: rotate(90deg);
         }
 
 
@@ -204,6 +272,11 @@
             align-items: center;
             gap: 10px;
             margin-right: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-container:hover {
+            transform: scale(1.05);
         }
 
         .logo-bunny {
@@ -212,6 +285,11 @@
             object-fit: contain;
             filter: drop-shadow(0 0 8px rgba(0, 217, 255, 0.5));
             animation: bunnyFloat 3s ease-in-out infinite;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-container:hover .logo-bunny {
+            transform: translateY(-3px) rotate(10deg);
         }
 
         @keyframes bunnyFloat {
@@ -223,10 +301,17 @@
             font-size: 20px;
             font-weight: 700;
             background: linear-gradient(135deg, #00D9FF 0%, #00a8cc 100%);
+            background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             letter-spacing: 1px;
+            animation: gradientText 3s ease infinite;
+        }
+
+        @keyframes gradientText {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         .nav-buttons { display: flex; gap: 8px; }
@@ -237,13 +322,34 @@
             color: var(--text-muted); user-select: none;
             background: rgba(0, 217, 255, 0.05);
             border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
         }
+
+        /* Magnetic button effect */
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 217, 255, 0.2), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .nav-button:hover::before {
+            opacity: 1;
+        }
+
         .nav-button:hover { 
             background: var(--hover); 
             color: var(--accent);
             border-color: var(--accent);
             box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
-            transform: translateY(-2px);
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        .nav-button:active {
+            transform: translateY(-1px) scale(0.98);
         }
 
 
@@ -253,7 +359,32 @@
         }
         .nav-button:hover .settings-icon-img { 
             opacity: 1; 
-            filter: drop-shadow(0 0 5px var(--accent)); 
+            filter: drop-shadow(0 0 5px var(--accent));
+            transform: rotate(90deg);
+        }
+
+        /* Pulsing notification dot on settings */
+        .settings-notification {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.3);
+                opacity: 0.7;
+            }
         }
 
 
@@ -270,7 +401,7 @@
             border-color: var(--accent); 
             box-shadow: 0 0 0 3px var(--accent-glow), 0 0 20px rgba(0, 217, 255, 0.2);
             background: rgba(26, 29, 41, 0.8);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
         }
         input#bar { 
             flex-grow: 1; background: transparent; border: none; 
@@ -304,7 +435,20 @@
             flex-direction: column;
             align-items: center;
             gap: 15px;
+            animation: fadeInUp 0.8s ease-out;
         }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .new-tab-content img {
             width: 120px;
             height: 120px;
@@ -319,10 +463,12 @@
         .new-tab-content h1 { 
             font-size: 56px; font-weight: 700; 
             background: linear-gradient(135deg, #00D9FF 0%, #ffffff 100%); 
+            background-size: 200% 200%;
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             background-clip: text;
             margin: 0;
             letter-spacing: 2px;
+            animation: gradientText 3s ease infinite;
         }
         .new-tab-content p {
             color: var(--text-muted); 
@@ -341,7 +487,16 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
         }
-        .modal-overlay.show { display: flex; }
+        .modal-overlay.show { 
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         .modal-content { 
             background: var(--glass-bg); 
             padding: 35px; border-radius: 20px; 
@@ -354,6 +509,18 @@
             backdrop-filter: blur(30px) saturate(180%);
             -webkit-backdrop-filter: blur(30px) saturate(180%);
             position: relative;
+            animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: scale(0.8) translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
         }
 
         .modal-content::before {
@@ -383,8 +550,13 @@
             background: rgba(0, 217, 255, 0.1); 
             color: var(--accent);
             box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
         }
+
+        .setting-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
         .setting-btn.active-wisp { 
             border-color: var(--accent); 
             background: var(--accent-glow); 
@@ -393,20 +565,27 @@
         }
         .setting-btn.primary { 
             background: linear-gradient(135deg, var(--accent) 0%, #00a8cc 100%); 
+            background-size: 200% 200%;
             color: #0f1117; 
             border: none; 
             font-size: 12px; 
             padding: 15px;
             font-weight: 600;
             box-shadow: 0 6px 25px rgba(0, 217, 255, 0.5);
+            animation: gradientShift 3s ease infinite;
         }
         .setting-btn.primary:hover {
             box-shadow: 0 8px 35px rgba(0, 217, 255, 0.7);
-            transform: translateY(-3px);
+            transform: translateY(-3px) scale(1.02);
         }
 
 
-        .ping-tag { position: absolute; right: 10px; font-size: 8px; opacity: 0.6; }
+        .ping-tag { 
+            position: absolute; right: 10px; font-size: 8px; opacity: 0.6;
+            padding: 2px 6px;
+            background: rgba(0, 217, 255, 0.1);
+            border-radius: 4px;
+        }
 
 
         .btn-row { display: flex; gap: 8px; }
@@ -426,6 +605,7 @@
         .custom-wisp-input:focus { 
             border-color: var(--accent);
             box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
+            transform: translateY(-1px);
         }
 
 
@@ -452,12 +632,40 @@
             z-index: 10;
             letter-spacing: 1px;
             box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s backwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         footer a {
             color: var(--accent);
             text-decoration: none;
             transition: 0.2s;
+            position: relative;
+        }
+
+        footer a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        footer a:hover::after {
+            width: 100%;
         }
 
         footer a:hover {
@@ -495,18 +703,19 @@
                 <span class="logo-text">CLG</span>
             </div>
             <div class="nav-buttons">
-                <div class="nav-button" onclick="goBack()">←</div>
-                <div class="nav-button" onclick="goForward()">→</div>
-                <div class="nav-button" onclick="reloadPage()">↻</div>
+                <div class="nav-button magnetic-btn" onclick="goBack()">←</div>
+                <div class="nav-button magnetic-btn" onclick="goForward()">→</div>
+                <div class="nav-button magnetic-btn" onclick="reloadPage()">↻</div>
             </div>
             <div class="search-container">
                 <input type="text" placeholder="Search with Brave or enter URL" id="bar" autocomplete="off">
             </div>
             <div class="nav-buttons">
-                <div class="nav-button" onclick="showSettings()">
+                <div class="nav-button magnetic-btn" onclick="showSettings()" style="position: relative;">
                     <img src="settingsicon.png" class="settings-icon-img" alt="Settings">
+                    <div class="settings-notification"></div>
                 </div>
-                <div class="nav-button" onclick="toggleFullScreen()">⛶</div>
+                <div class="nav-button magnetic-btn" onclick="toggleFullScreen()">⛶</div>
             </div>
         </nav>
     </div>
@@ -833,14 +1042,27 @@
         function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
 
 
-        // Custom Cursor Logic
+        // Custom Cursor Logic with trail
         const cursorDot = document.querySelector('.cursor-dot');
         let mouseX = 0, mouseY = 0;
         let dotX = 0, dotY = 0;
+        let trailTimer;
 
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
+
+            // Cursor trail effect
+            clearTimeout(trailTimer);
+            trailTimer = setTimeout(() => {
+                const trail = document.createElement('div');
+                trail.className = 'cursor-trail';
+                trail.style.left = mouseX + 'px';
+                trail.style.top = mouseY + 'px';
+                trail.style.transform = 'translate(-50%, -50%)';
+                document.body.appendChild(trail);
+                setTimeout(() => trail.remove(), 500);
+            }, 30);
         });
 
         function animateCursor() {
@@ -870,6 +1092,17 @@
         function handleMouseLeave() {
             cursorDot.classList.remove('hover');
         }
+
+        // Magnetic button effect
+        document.querySelectorAll('.magnetic-btn').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                btn.style.setProperty('--mouse-x', x + '%');
+                btn.style.setProperty('--mouse-y', y + '%');
+            });
+        });
 
         updateHoverTargets();
 
