@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLG Proxy</title>
+    <link rel="icon" type="image/png" href="clg-bunny.png">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9DZ1KWKQT"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-E9DZ1KWKQT');
+    </script>
+    
+    <script src="/ixlmath/baremux/index.js"></script>
+    <script src="/ixlmath/scram/scramjet.all.js"></script>
+    <script>navigator.serviceWorker.register("/ixlmath/sw.js")</script>
+
+
+    <style>
+        :root {
+            --bg-color: #0f1117;
+            --bg-secondary: #1a1d29;
+            --nav-bg: rgba(26, 29, 41, 0.85);
+            --tab-active: #1a1d29;
+            --tab-inactive: transparent;
+            --accent: #00D9FF;
+            --accent-glow: rgba(0, 217, 255, 0.3);
+            --text: #f8fafc;
+            --text-muted: #b3b3b3;
+            --input-bg: #0f1117;
+            --border: #2a2d39;
+            --hover: #1e212d;
+            --glass-bg: rgba(26, 29, 41, 0.6);
+        }
+
+
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, #0f1117 0%, #1a1d29 50%, #0f1117 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            overflow: hidden; color: var(--text);
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating particles background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, rgba(0, 217, 255, 0.3), transparent),
+                radial-gradient(2px 2px at 60% 70%, rgba(0, 217, 255, 0.2), transparent),
+                radial-gradient(1px 1px at 50% 50%, rgba(0, 217, 255, 0.25), transparent),
+                radial-gradient(1px 1px at 80% 10%, rgba(0, 217, 255, 0.2), transparent),
+                radial-gradient(2px 2px at 90% 60%, rgba(0, 217, 255, 0.15), transparent),
+                radial-gradient(1px 1px at 33% 80%, rgba(0, 217, 255, 0.2), transparent);
+            background-size: 200% 200%;
+            animation: particleFloat 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes particleFloat {
+            0%, 100% { background-position: 0% 0%, 100% 100%, 50% 50%, 80% 20%, 20% 80%, 70% 30%; }
+            50% { background-position: 100% 100%, 0% 0%, 25% 75%, 30% 70%, 90% 10%, 40% 60%; }
+        }
+
+        #loading-screen {
+            position: fixed; inset: 0;
+            background: var(--bg-color);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            z-index: 99999; transition: opacity 0.5s ease;
+        }
+        .black-hole { 
+            height: 100px; aspect-ratio: 1; background-color: black; border-radius: 50%; 
+            box-shadow: 0px 0px 40px 10px var(--accent), inset 0px 0px 10px #ffffff88; 
+            position: relative; animation: breathe 3s infinite ease-in-out;
+        }
+        @keyframes breathe { 
+            0%, 100% { transform: scale(1); box-shadow: 0px 0px 40px 10px var(--accent); } 
+            50% { transform: scale(1.05); box-shadow: 0px 0px 60px 20px var(--accent); } 
+        }
+
+
+        #top-ui { 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            position: relative;
+            z-index: 10;
+        }
+        body.nav-hidden #top-ui { transform: translateY(-108px); }
+        body.nav-hidden .frame-container { top: 0 !important; }
+
+
+        .tab-strip { 
+            display: flex; align-items: flex-end; padding: 12px 15px 0 15px; 
+            background: var(--bg-color); gap: 4px; height: 40px; 
+        }
+        .tab { 
+            background: var(--tab-inactive); padding: 8px 12px; border-radius: 10px 10px 0 0; 
+            font-size: 13px; min-width: 140px; max-width: 200px; color: var(--text-muted); 
+            border: 1px solid transparent; border-bottom: none; transition: all 0.2s ease; 
+            position: relative; display: flex; align-items: center; gap: 8px; cursor: pointer;
+        }
+        .tab.active { 
+            background: var(--tab-active); color: var(--text); border-color: var(--border);
+            box-shadow: 0 -2px 15px rgba(0, 217, 255, 0.1);
+        }
+        .tab.active::after { 
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; 
+            background: linear-gradient(90deg, transparent, var(--accent), transparent); 
+            box-shadow: 0 0 10px var(--accent); 
+        }
+        
+        .close-tab-btn {
+            background: none; border: none; color: inherit; font-size: 16px;
+            cursor: pointer; padding: 2px 6px; border-radius: 4px; line-height: 1;
+            display: flex; align-items: center; justify-content: center; opacity: 0.5;
+            transition: all 0.2s;
+        }
+        .close-tab-btn:hover { 
+            background: rgba(255, 96, 92, 0.2); 
+            color: #ff605c; opacity: 1; 
+        }
+
+
+        .navbar { 
+            display: flex; align-items: center; height: 56px; 
+            background: var(--glass-bg); 
+            padding: 0 20px; gap: 16px; 
+            border-bottom: 1px solid var(--border); 
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-right: 10px;
+        }
+
+        .logo-bunny {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(0, 217, 255, 0.5));
+            animation: bunnyFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes bunnyFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00D9FF 0%, #00a8cc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        .nav-buttons { display: flex; gap: 8px; }
+        .nav-button { 
+            cursor: pointer; width: 34px; height: 34px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; color: var(--text-muted); user-select: none;
+            background: rgba(0, 217, 255, 0.05);
+            border: 1px solid transparent;
+        }
+        .nav-button:hover { 
+            background: var(--hover); 
+            color: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
+        }
+
+
+        .settings-icon-img { 
+            width: 20px; height: 20px; object-fit: contain; 
+            opacity: 0.7; transition: 0.2s; 
+        }
+        .nav-button:hover .settings-icon-img { 
+            opacity: 1; 
+            filter: drop-shadow(0 0 5px var(--accent)); 
+        }
+
+
+        .search-container { 
+            flex-grow: 1; display: flex; align-items: center; 
+            background: var(--glass-bg); 
+            border-radius: 12px; padding: 0 16px; 
+            border: 1px solid var(--border); height: 38px; 
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .search-container:focus-within { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 3px var(--accent-glow), 0 0 20px rgba(0, 217, 255, 0.2);
+            background: rgba(26, 29, 41, 0.8);
+        }
+        input#bar { 
+            flex-grow: 1; background: transparent; border: none; 
+            color: white; padding: 8px; font-size: 14px; outline: none; 
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        input#bar::placeholder {
+            color: var(--text-muted);
+        }
+
+
+        .frame-container { 
+            position: absolute; top: 108px; left: 0; right: 0; bottom: 0; 
+            background: #000; 
+            transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 5;
+        }
+        iframe { width: 100%; height: 100%; border: none; display: none; }
+        iframe.active { display: block; }
+
+
+        .new-tab-screen { 
+            position: absolute; inset: 0; 
+            display: flex; align-items: center; justify-content: center; 
+            background: linear-gradient(135deg, #0f1117 0%, #1a1d29 100%);
+            color: #fff; flex-direction: column; z-index: 5; 
+        }
+        .new-tab-content {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .new-tab-content img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 30px rgba(0, 217, 255, 0.6));
+            animation: logoFloat 4s ease-in-out infinite;
+        }
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+        .new-tab-content h1 { 
+            font-size: 56px; font-weight: 700; 
+            background: linear-gradient(135deg, #00D9FF 0%, #ffffff 100%); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+        .new-tab-content p {
+            color: var(--text-muted); 
+            letter-spacing: 3px; 
+            font-size: 11px;
+            text-transform: uppercase;
+            margin: 5px 0 0 0;
+        }
+
+
+        .modal-overlay { 
+            position: fixed; inset: 0; 
+            background: rgba(0,0,0,0.85); 
+            display: none; align-items: center; justify-content: center; 
+            z-index: 100000; 
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-content { 
+            background: var(--glass-bg); 
+            padding: 30px; border-radius: 16px; 
+            border: 1px solid var(--accent); 
+            width: 420px; 
+            box-shadow: 0 20px 60px rgba(0, 217, 255, 0.2), 0 0 40px rgba(0, 217, 255, 0.1);
+            text-align: center;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        }
+        
+        .setting-btn {
+            width: 100%; padding: 12px; margin: 4px 0; border-radius: 10px; 
+            border: 1px solid var(--border);
+            background: var(--hover); color: var(--text); font-weight: 500; 
+            cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; 
+            text-transform: uppercase; letter-spacing: 1px; font-size: 10px;
+            position: relative;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .setting-btn:hover { 
+            border-color: var(--accent); 
+            background: var(--tab-active); 
+            color: var(--accent);
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.2);
+        }
+        .setting-btn.active-wisp { 
+            border-color: var(--accent); 
+            background: var(--accent-glow); 
+            color: white;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+        }
+        .setting-btn.primary { 
+            background: var(--accent); 
+            color: #0f1117; 
+            border: none; 
+            font-size: 12px; 
+            padding: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(0, 217, 255, 0.4);
+        }
+        .setting-btn.primary:hover {
+            background: #00a8cc;
+            box-shadow: 0 6px 30px rgba(0, 217, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+
+        .ping-tag { position: absolute; right: 10px; font-size: 8px; opacity: 0.6; }
+
+
+        .btn-row { display: flex; gap: 8px; }
+        .btn-row .setting-btn { flex: 1; }
+
+
+        .custom-wisp-box { display: flex; gap: 5px; margin-top: 5px; }
+        .custom-wisp-input { 
+            flex: 1; background: var(--input-bg); 
+            border: 1px solid var(--border); border-radius: 8px; 
+            color: white; padding: 8px; font-size: 11px; outline: none;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .custom-wisp-input:focus { 
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+        }
+
+
+        .section-label { 
+            color: var(--text-muted); font-size: 10px; 
+            text-transform: uppercase; letter-spacing: 2px; 
+            margin: 15px 0 5px 0; display: block; 
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-top: 1px solid var(--border);
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            z-index: 10;
+            letter-spacing: 1px;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        footer a:hover {
+            text-shadow: 0 0 10px var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+
+    <div id="loading-screen"><div class="black-hole"></div></div>
+
+
+    <div id="top-ui">
+        <div class="tab-strip" id="tab-strip">
+            <div class="nav-button" onclick="createNewTab()" style="font-size: 24px;">+</div>
+        </div>
+
+
+        <nav class="navbar">
+            <div class="logo-container">
+                <img src="clg-bunny.png" alt="CLG" class="logo-bunny">
+                <span class="logo-text">CLG</span>
+            </div>
+            <div class="nav-buttons">
+                <div class="nav-button" onclick="goBack()">←</div>
+                <div class="nav-button" onclick="goForward()">→</div>
+                <div class="nav-button" onclick="reloadPage()">↻</div>
+            </div>
+            <div class="search-container">
+                <input type="text" placeholder="Search with Brave or enter URL" id="bar" autocomplete="off">
+            </div>
+            <div class="nav-buttons">
+                <div class="nav-button" onclick="showSettings()">
+                    <img src="settingsicon.png" class="settings-icon-img" alt="Settings">
+                </div>
+                <div class="nav-button" onclick="toggleFullScreen()">⛶</div>
+            </div>
+        </nav>
+    </div>
+
+
+    <div class="frame-container" id="frame-container">
+        <div id="new-tab-ui" class="new-tab-screen">
+            <div class="new-tab-content">
+                <img src="clg-bunny.png" alt="Clifford">
+                <h1>CLG Proxy</h1>
+                <p>chunglloyd.xyc</p>
+            </div>
+        </div>
+    </div>
+
+
+    <footer>
+        © 2026 <a href="https://chunglloyd.xyc" target="_blank">chunglloyd.xyc</a> | CLG Proxy
+    </footer>
+
+
+    <div class="modal-overlay" id="settings-modal" onclick="hideSettings()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2 style="margin-top:0; color: var(--accent); letter-spacing: 2px; font-size: 18px; text-transform: uppercase;">Settings</h2>
+            
+            <span class="section-label">General</span>
+            <button class="setting-btn primary" onclick="openAboutBlank()">Open in About:Blank</button>
+            <button class="setting-btn" onclick="hideNavbar()">Hide Navigation Bar</button>
+
+
+            <span class="section-label">Wisp Servers</span>
+            <div style="display: flex; flex-direction: column; gap: 0;">
+                <button id="wisp-main" class="setting-btn active-wisp" onclick="setWisp('main')">
+                    Main Server <span class="ping-tag" id="ping-main">--ms</span>
+                </button>
+                <div class="btn-row">
+                    <button id="wisp-backup2" class="setting-btn" onclick="setWisp('backup2')">
+                        Backup 2 <span class="ping-tag" id="ping-backup2">--ms</span>
+                    </button>
+                    <button id="wisp-backup3" class="setting-btn" onclick="setWisp('backup3')">
+                        Backup 3 <span class="ping-tag" id="ping-backup3">--ms</span>
+                    </button>
+                </div>
+                <div class="btn-row">
+                    <button id="wisp-backup4" class="setting-btn" onclick="setWisp('backup4')">
+                        Backup 4 <span class="ping-tag" id="ping-backup4">--ms</span>
+                    </button>
+                    <button id="wisp-backup5" class="setting-btn" onclick="setWisp('backup5')">
+                        Backup 5 <span class="ping-tag" id="ping-backup5">--ms</span>
+                    </button>
+                </div>
+                <div class="btn-row">
+                    <button id="wisp-backup6" class="setting-btn" onclick="setWisp('backup6')">
+                        Backup 6 <span class="ping-tag" id="ping-backup6">--ms</span>
+                    </button>
+                    <button id="wisp-backup7" class="setting-btn" onclick="setWisp('backup7')">
+                        Backup 7 <span class="ping-tag" id="ping-backup7">--ms</span>
+                    </button>
+                </div>
+                <div class="btn-row">
+                    <button id="wisp-backup8" class="setting-btn" onclick="setWisp('backup8')">
+                        Backup 8 <span class="ping-tag" id="ping-backup8">--ms</span>
+                    </button>
+                </div>
+                
+                <div class="custom-wisp-box">
+                    <input type="text" id="custom-wisp-url" class="custom-wisp-input" placeholder="wss://your-wisp-server/wisp/">
+                    <button class="setting-btn" style="margin:0; width: auto; padding: 0 15px;" onclick="setCustomWisp()">Use</button>
+                </div>
+            </div>
+
+
+            <button class="setting-btn" onclick="hideSettings()" style="margin-top: 20px; border: none; background: transparent; opacity: 0.6; text-transform: none; letter-spacing: 0;">
+                Close
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+        const wispUrls = {
+            main: "wss://dywhmcwp1y96m.cloudfront.net/wisp/",
+            backup2: "wss://wisp.rhw.one/",
+            backup3: "wss://ixlmathlogin.ixl.best/wisp/",
+            backup4: "wss://s0lace-j2np.onrender.com/wisp/",
+            backup5: "wss://zyrongardeningalore.speedinsure.hk/wisp/",
+            backup6: "wss://glseries.net/wisp/",
+            backup7: "wss://gointospace.app/wisp/",
+            backup8: "wss://dash.goip.de/wisp/"
+        };
+        
+        let tabs = [];
+        let activeTabId = null;
+        let currentWisp = wispUrls.main;
+
+
+        const connection = new BareMux.BareMuxConnection("/ixlmath/baremux/worker.js");
+        function initProxy() { connection.setTransport("/ixlmath/libcurl/index.mjs", [{ websocket: currentWisp }]); }
+
+
+        const { ScramjetController } = $scramjetLoadController();
+        const scramjet = new ScramjetController({
+            files: { all: "/ixlmath/scram/scramjet.all.js", wasm: "/ixlmath/scram/scramjet.wasm.wasm", sync: "/ixlmath/scram/scramjet.sync.js" },
+            prefix: "/ixlmath/go/" 
+        });
+
+
+        function loadWispSettings() {
+            const savedWispKey = localStorage.getItem('zyron-wisp-key');
+            const savedCustomWisp = localStorage.getItem('zyron-custom-wisp');
+
+
+            if (savedCustomWisp) {
+                currentWisp = savedCustomWisp;
+                document.getElementById('custom-wisp-url').value = savedCustomWisp;
+                document.querySelectorAll('.active-wisp').forEach(btn => btn.classList.remove('active-wisp'));
+            } else if (savedWispKey && wispUrls[savedWispKey]) {
+                currentWisp = wispUrls[savedWispKey];
+                document.querySelectorAll('.active-wisp').forEach(btn => btn.classList.remove('active-wisp'));
+                const btn = document.getElementById(`wisp-${savedWispKey}`);
+                if (btn) btn.classList.add('active-wisp');
+            }
+        }
+
+
+        function setWisp(type) {
+            currentWisp = wispUrls[type];
+            localStorage.setItem('zyron-wisp-key', type);
+            localStorage.removeItem('zyron-custom-wisp');
+            document.querySelectorAll('.active-wisp').forEach(btn => btn.classList.remove('active-wisp'));
+            if(document.getElementById(`wisp-${type}`)) document.getElementById(`wisp-${type}`).classList.add('active-wisp');
+            initProxy();
+        }
+
+
+        function setCustomWisp() {
+            const url = document.getElementById('custom-wisp-url').value.trim();
+            if(!url.startsWith('ws')) {
+                alert('failed to connect to custom wisp server url');
+                return;
+            }
+            
+            const testSocket = new WebSocket(url);
+            const timeout = setTimeout(() => {
+                testSocket.close();
+                alert('failed to connect to custom wisp server url');
+            }, 5000);
+
+
+            testSocket.onopen = () => {
+                clearTimeout(timeout);
+                currentWisp = url;
+                localStorage.setItem('zyron-custom-wisp', url);
+                localStorage.removeItem('zyron-wisp-key');
+                document.querySelectorAll('.active-wisp').forEach(btn => btn.classList.remove('active-wisp'));
+                initProxy();
+                testSocket.close();
+                alert('successfully connected to custom wisp server');
+            };
+
+
+            testSocket.onerror = () => {
+                clearTimeout(timeout);
+                alert('failed to connect to custom wisp server url');
+            };
+        }
+
+
+        async function checkWispPing(url, elementId) {
+            const start = Date.now();
+            try {
+                const socket = new WebSocket(url);
+                const timeout = setTimeout(() => { socket.close(); }, 3000);
+
+
+                socket.onopen = () => {
+                    clearTimeout(timeout);
+                    const ping = Date.now() - start;
+                    const el = document.getElementById(elementId);
+                    if(el) el.innerText = ping + "ms";
+                    socket.close();
+                };
+                socket.onerror = () => { 
+                    const el = document.getElementById(elementId);
+                    if(el) el.innerText = "ERR"; 
+                    if (url === currentWisp) autoSwitch();
+                };
+            } catch (e) { 
+                const el = document.getElementById(elementId);
+                if(el) el.innerText = "ERR"; 
+            }
+        }
+
+
+        function refreshAllPings() {
+            Object.keys(wispUrls).forEach(key => {
+                checkWispPing(wispUrls[key], `ping-${key}`);
+            });
+        }
+
+
+        function autoSwitch() {
+            for (const [key, url] of Object.entries(wispUrls)) {
+                const el = document.getElementById(`ping-${key}`);
+                const pingText = el ? el.innerText : "ERR";
+                
+                if (pingText !== "ERR" && pingText !== "--ms") {
+                    setWisp(key);
+                    const bar = document.getElementById('bar');
+                    bar.placeholder = `AUTO-RECOVERY: Switched to ${key}`;
+                    setTimeout(() => { bar.placeholder = "Search with Brave or enter URL"; }, 4000);
+                    return;
+                }
+            }
+        }
+
+
+        setInterval(() => {
+            checkWispPing(currentWisp, `ping-${localStorage.getItem('zyron-wisp-key') || 'main'}`);
+        }, 10000);
+
+
+        function showBH() { document.getElementById('loading-screen').style.display = 'flex'; document.getElementById('loading-screen').style.opacity = '1'; }
+        function hideBH() { document.getElementById('loading-screen').style.opacity = '0'; setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500); }
+
+
+        function createNewTab() {
+            const id = Date.now() + Math.random();
+            tabs.push({ id, url: '', title: 'New Tab', loading: false });
+            const frame = document.createElement('iframe');
+            frame.id = `frame-${id}`;
+            frame.onload = () => { 
+                const t = tabs.find(x => x.id === id); 
+                if(t) { t.loading = false; renderTabs(); hideBH(); }
+            };
+            document.getElementById('frame-container').appendChild(frame);
+            switchTab(id);
+        }
+
+
+        function switchTab(id) {
+            activeTabId = id;
+            document.querySelectorAll('iframe').forEach(f => f.classList.remove('active'));
+            const frame = document.getElementById(`frame-${id}`);
+            if(frame) frame.classList.add('active');
+            const tab = tabs.find(t => t.id === id);
+            document.getElementById('bar').value = tab.url || '';
+            document.getElementById('new-tab-ui').style.display = frame.src ? 'none' : 'flex';
+            renderTabs();
+        }
+
+
+        function renderTabs() {
+            const strip = document.getElementById('tab-strip');
+            const addBtn = strip.querySelector('.nav-button');
+            strip.querySelectorAll('.tab').forEach(t => t.remove());
+            tabs.forEach(tab => {
+                const tabEl = document.createElement('div');
+                tabEl.className = `tab ${tab.id === activeTabId ? 'active' : ''}`;
+                tabEl.onclick = () => switchTab(tab.id);
+                tabEl.innerHTML = `<span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${tab.title}</span><button class="close-tab-btn" onclick="closeTab(event, ${tab.id})">×</button>`;
+                strip.insertBefore(tabEl, addBtn);
+            });
+        }
+
+
+        function nav() {
+            const val = document.getElementById('bar').value.trim();
+            if(!val) return;
+            document.activeElement.blur(); 
+            showBH();
+            let url = (val.includes('.') && !val.includes(' ')) ? (val.startsWith('http') ? val : 'https://' + val) : `https://search.brave.com/search?q=${encodeURIComponent(val)}`;
+            const tab = tabs.find(t => t.id === activeTabId);
+            tab.url = url; tab.title = url.split('/')[2] || url;
+            document.getElementById(`frame-${activeTabId}`).src = scramjet.encodeUrl(url);
+            document.getElementById('new-tab-ui').style.display = 'none';
+            renderTabs();
+        }
+
+
+        function reloadPage() {
+            const frame = document.getElementById(`frame-${activeTabId}`);
+            if (!frame || !frame.src) return;
+            showBH();
+            try { frame.contentWindow.location.reload(); } catch (e) { frame.src = frame.src; }
+        }
+
+
+        setInterval(() => {
+            if (!activeTabId) return;
+            const frame = document.getElementById(`frame-${activeTabId}`);
+            if (!frame || !frame.src) return;
+            try {
+                const path = frame.contentWindow.location.pathname;
+                if (path.includes('/ixlmath/go/')) {
+                    const encoded = path.split('/ixlmath/go/')[1];
+                    const decoded = scramjet.decodeUrl(encoded);
+                    const tab = tabs.find(t => t.id === activeTabId);
+                    if (tab && tab.url !== decoded && document.activeElement !== document.getElementById('bar')) {
+                        tab.url = decoded;
+                        document.getElementById('bar').value = decoded;
+                    }
+                }
+            } catch (e) {}
+        }, 1000);
+
+
+        function hideNavbar() { document.body.classList.add('nav-hidden'); hideSettings(); }
+        function openAboutBlank() {
+            const win = window.open('about:blank', '_blank');
+            if (!win) return;
+            const doc = win.document;
+            const iframe = doc.createElement('iframe');
+            doc.title = 'Classes';
+            iframe.style = 'position:fixed;top:0;left:0;width:100%;height:100%;border:none;';
+            iframe.src = window.location.href;
+            doc.body.appendChild(iframe);
+            window.location.replace('https://google.com'); 
+        }
+
+
+        function closeTab(e, id) { e.stopPropagation(); if(tabs.length === 1) return; tabs = tabs.filter(t => t.id !== id); document.getElementById(`frame-${id}`).remove(); if(activeTabId === id) switchTab(tabs[0].id); else renderTabs(); }
+        function showSettings() { document.getElementById('settings-modal').classList.add('show'); refreshAllPings(); }
+        function hideSettings() { document.getElementById('settings-modal').classList.remove('show'); }
+        function goBack() { try { document.getElementById(`frame-${activeTabId}`).contentWindow.history.back(); } catch(e){} }
+        function goForward() { try { document.getElementById(`frame-${activeTabId}`).contentWindow.history.forward(); } catch(e){} }
+        function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+
+
+        window.onload = () => { 
+            loadWispSettings();
+            initProxy();
+            scramjet.init();
+            createNewTab(); 
+            refreshAllPings(); 
+            setTimeout(hideBH, 1000); 
+        };
+        document.getElementById('bar').onkeydown = (e) => { if(e.key === 'Enter') nav(); };
+    </script>
+</body>
+</html>
