@@ -58,55 +58,54 @@
         }
 
         /* Custom Cursor - Simplified */
-.cursor-dot {
-    position: fixed;
-    width: 8px;
-    height: 8px;
-    background: var(--accent);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 999999;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 15px var(--accent), 0 0 5px rgba(0, 217, 255, 0.5);
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-                height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                background 0.3s ease,
-                box-shadow 0.3s ease;
-}
+        .cursor-dot {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 999999;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px var(--accent), 0 0 5px rgba(0, 217, 255, 0.5);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                        height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        background 0.3s ease,
+                        box-shadow 0.3s ease;
+        }
 
-.cursor-dot.hover {
-    width: 40px;
-    height: 40px;
-    background: rgba(0, 217, 255, 0.2);
-    border: 2px solid var(--accent);
-    box-shadow: 0 0 30px rgba(0, 217, 255, 0.8), 
-                0 0 15px rgba(0, 217, 255, 0.5),
-                inset 0 0 15px rgba(0, 217, 255, 0.3);
-}
+        .cursor-dot.hover {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 217, 255, 0.2);
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.8), 
+                        0 0 15px rgba(0, 217, 255, 0.5),
+                        inset 0 0 15px rgba(0, 217, 255, 0.3);
+        }
 
-/* Click ripple effect */
-.ripple {
-    position: fixed;
-    border: 2px solid var(--accent);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 999998;
-    animation: rippleEffect 0.6s ease-out;
-}
+        /* Click ripple effect */
+        .ripple {
+            position: fixed;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 999998;
+            animation: rippleEffect 0.6s ease-out;
+        }
 
-@keyframes rippleEffect {
-    0% {
-        width: 20px;
-        height: 20px;
-        opacity: 1;
-    }
-    100% {
-        width: 100px;
-        height: 100px;
-        opacity: 0;
-    }
-}
-
+        @keyframes rippleEffect {
+            0% {
+                width: 20px;
+                height: 20px;
+                opacity: 1;
+            }
+            100% {
+                width: 100px;
+                height: 100px;
+                opacity: 0;
+            }
+        }
 
         /* Floating particles background */
         body::before {
@@ -470,7 +469,7 @@
             * {
                 cursor: auto !important;
             }
-            .cursor, .cursor-dot {
+            .cursor-dot {
                 display: none !important;
             }
         }
@@ -479,8 +478,7 @@
 <body>
 
     <!-- Custom Cursor -->
-<div class="cursor-dot"></div>
-
+    <div class="cursor-dot"></div>
 
     <div id="loading-screen"><div class="black-hole"></div></div>
 
@@ -589,99 +587,6 @@
 
 
     <script>
-        // Custom Cursor Logic - Simplified
-const cursorDot = document.querySelector('.cursor-dot');
-let mouseX = 0, mouseY = 0;
-let dotX = 0, dotY = 0;
-
-document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-});
-
-function animateCursor() {
-    // Smooth easing for cursor dot
-    dotX += (mouseX - dotX) * 0.2;
-    dotY += (mouseY - dotY) * 0.2;
-    cursorDot.style.left = dotX + 'px';
-    cursorDot.style.top = dotY + 'px';
-
-    requestAnimationFrame(animateCursor);
-}
-animateCursor();
-
-// Dynamic hover effect on interactive elements
-function updateHoverTargets() {
-    const hoverTargets = document.querySelectorAll('button, a, input, .nav-button, .tab, .setting-btn, .close-tab-btn');
-    hoverTargets.forEach(target => {
-        target.addEventListener('mouseenter', () => {
-            cursorDot.classList.add('hover');
-        });
-        target.addEventListener('mouseleave', () => {
-            cursorDot.classList.remove('hover');
-        });
-    });
-}
-updateHoverTargets();
-
-// Update hover targets when tabs are created/changed
-const originalRenderTabs = renderTabs;
-renderTabs = function() {
-    originalRenderTabs();
-    updateHoverTargets();
-};
-
-// Click ripple effect
-document.addEventListener('click', (e) => {
-    const ripple = document.createElement('div');
-    ripple.className = 'ripple';
-    ripple.style.left = e.clientX + 'px';
-    ripple.style.top = e.clientY + 'px';
-    ripple.style.transform = 'translate(-50%, -50%)';
-    document.body.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 600);
-});
-
-
-        function animateCursor() {
-            // Smooth easing for main cursor
-            cursorX += (mouseX - cursorX) * 0.15;
-            cursorY += (mouseY - cursorY) * 0.15;
-            cursor.style.left = cursorX + 'px';
-            cursor.style.top = cursorY + 'px';
-
-            // Faster movement for dot
-            dotX += (mouseX - dotX) * 0.3;
-            dotY += (mouseY - dotY) * 0.3;
-            cursorDot.style.left = dotX + 'px';
-            cursorDot.style.top = dotY + 'px';
-
-            requestAnimationFrame(animateCursor);
-        }
-        animateCursor();
-
-        // Hover effect on interactive elements
-        const hoverTargets = document.querySelectorAll('button, a, input, .nav-button, .tab, .setting-btn');
-        hoverTargets.forEach(target => {
-            target.addEventListener('mouseenter', () => {
-                cursor.classList.add('hover');
-            });
-            target.addEventListener('mouseleave', () => {
-                cursor.classList.remove('hover');
-            });
-        });
-
-        // Click ripple effect
-        document.addEventListener('click', (e) => {
-            const ripple = document.createElement('div');
-            ripple.className = 'ripple';
-            ripple.style.left = e.clientX + 'px';
-            ripple.style.top = e.clientY + 'px';
-            ripple.style.transform = 'translate(-50%, -50%)';
-            document.body.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 600);
-        });
-
         const wispUrls = {
             main: "wss://dywhmcwp1y96m.cloudfront.net/wisp/",
             backup2: "wss://wisp.rhw.one/",
@@ -712,7 +617,6 @@ document.addEventListener('click', (e) => {
         function loadWispSettings() {
             const savedWispKey = localStorage.getItem('zyron-wisp-key');
             const savedCustomWisp = localStorage.getItem('zyron-custom-wisp');
-
 
             if (savedCustomWisp) {
                 currentWisp = savedCustomWisp;
@@ -750,7 +654,6 @@ document.addEventListener('click', (e) => {
                 alert('failed to connect to custom wisp server url');
             }, 5000);
 
-
             testSocket.onopen = () => {
                 clearTimeout(timeout);
                 currentWisp = url;
@@ -761,7 +664,6 @@ document.addEventListener('click', (e) => {
                 testSocket.close();
                 alert('successfully connected to custom wisp server');
             };
-
 
             testSocket.onerror = () => {
                 clearTimeout(timeout);
@@ -775,7 +677,6 @@ document.addEventListener('click', (e) => {
             try {
                 const socket = new WebSocket(url);
                 const timeout = setTimeout(() => { socket.close(); }, 3000);
-
 
                 socket.onopen = () => {
                     clearTimeout(timeout);
@@ -865,6 +766,7 @@ document.addEventListener('click', (e) => {
                 tabEl.innerHTML = `<span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${tab.title}</span><button class="close-tab-btn" onclick="closeTab(event, ${tab.id})">×</button>`;
                 strip.insertBefore(tabEl, addBtn);
             });
+            updateHoverTargets();
         }
 
 
@@ -931,6 +833,57 @@ document.addEventListener('click', (e) => {
         function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
 
 
+        // Custom Cursor Logic
+        const cursorDot = document.querySelector('.cursor-dot');
+        let mouseX = 0, mouseY = 0;
+        let dotX = 0, dotY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            dotX += (mouseX - dotX) * 0.2;
+            dotY += (mouseY - dotY) * 0.2;
+            cursorDot.style.left = dotX + 'px';
+            cursorDot.style.top = dotY + 'px';
+
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        function updateHoverTargets() {
+            const hoverTargets = document.querySelectorAll('button, a, input, .nav-button, .tab, .setting-btn, .close-tab-btn');
+            hoverTargets.forEach(target => {
+                target.removeEventListener('mouseenter', handleMouseEnter);
+                target.removeEventListener('mouseleave', handleMouseLeave);
+                target.addEventListener('mouseenter', handleMouseEnter);
+                target.addEventListener('mouseleave', handleMouseLeave);
+            });
+        }
+
+        function handleMouseEnter() {
+            cursorDot.classList.add('hover');
+        }
+
+        function handleMouseLeave() {
+            cursorDot.classList.remove('hover');
+        }
+
+        updateHoverTargets();
+
+        document.addEventListener('click', (e) => {
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            ripple.style.left = e.clientX + 'px';
+            ripple.style.top = e.clientY + 'px';
+            ripple.style.transform = 'translate(-50%, -50%)';
+            document.body.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        });
+
+
         window.onload = () => { 
             loadWispSettings();
             initProxy();
@@ -943,4 +896,3 @@ document.addEventListener('click', (e) => {
     </script>
 </body>
 </html>
-
