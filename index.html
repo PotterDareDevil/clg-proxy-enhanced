@@ -1125,12 +1125,12 @@ animateCursor();
             document.body.appendChild(ripple);
             setTimeout(() => ripple.remove(), 600);
         });
-// Navbar toggle keybind (Ctrl + H)
+// Navbar toggle keybind (Ctrl + K)
 let navbarHidden = false;
 
 document.addEventListener('keydown', (e) => {
-    // Check for Ctrl + H (or Cmd + H on Mac)
-    if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
+    // Check for Ctrl + K (or Cmd + K on Mac)
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault(); // Prevent default browser behavior
         
         navbarHidden = !navbarHidden;
@@ -1142,7 +1142,7 @@ document.addEventListener('keydown', (e) => {
         }
         
         // Optional: Show a quick notification
-        showNotification(navbarHidden ? 'Navigation Hidden (Ctrl+H to show)' : 'Navigation Visible');
+        showNotification(navbarHidden ? 'Navigation Hidden (Ctrl+K to show)' : 'Navigation Visible');
     }
 });
 
@@ -1178,6 +1178,7 @@ function showNotification(message) {
 }
 
 
+
         window.onload = () => { 
             loadWispSettings();
             initProxy();
@@ -1190,6 +1191,7 @@ function showNotification(message) {
     </script>
 </body>
 </html>
+
 
 
 
