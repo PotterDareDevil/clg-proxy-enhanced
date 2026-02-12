@@ -502,6 +502,92 @@
         }
 
 
+        /* Login System Styles */
+.login-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+    backdrop-filter: blur(15px);
+}
+
+.login-box {
+    background: var(--glass-bg);
+    padding: 40px;
+    border-radius: 20px;
+    border: 1px solid rgba(0, 217, 255, 0.3);
+    width: 400px;
+    box-shadow: 0 20px 60px rgba(0, 217, 255, 0.3);
+    backdrop-filter: blur(30px) saturate(180%);
+    text-align: center;
+    animation: modalSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.login-box h1 {
+    color: var(--accent);
+    font-size: 32px;
+    margin: 0 0 10px 0;
+    letter-spacing: 2px;
+}
+
+.login-box p {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin: 0 0 30px 0;
+    letter-spacing: 1px;
+}
+
+.login-input {
+    width: 100%;
+    background: rgba(15, 17, 23, 0.8);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: white;
+    padding: 12px;
+    font-size: 14px;
+    outline: none;
+    font-family: 'Space Grotesk', sans-serif;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    transition: all 0.3s;
+}
+
+.login-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
+}
+
+.login-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent) 0%, #00a8cc 100%);
+    color: #0f1117;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 6px 25px rgba(0, 217, 255, 0.5);
+    transition: all 0.3s;
+}
+
+.login-btn:hover {
+    box-shadow: 0 8px 35px rgba(0, 217, 255, 0.7);
+    transform: translateY(-2px);
+}
+
+.login-error {
+    color: #ff605c;
+    font-size: 12px;
+    margin-top: 15px;
+    display: none;
+}
+
         .modal-overlay { 
             position: fixed; inset: 0; 
             background: rgba(0,0,0,0.85); 
@@ -555,6 +641,8 @@
             height: 1px;
             background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.5), transparent);
         }
+
+        
         
         .setting-btn {
             width: 100%; padding: 13px; margin: 5px 0; border-radius: 12px; 
@@ -708,6 +796,19 @@
 </head>
 <body>
 
+  <!-- Login System -->
+    <div class="login-overlay" id="login-overlay">
+        <div class="login-box">
+            <img src="clg-bunny.png" alt="CLG" style="width: 80px; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.6));">
+            <h1>CLG ACCESS</h1>
+            <p>Enter credentials to continue</p>
+            <input type="text" id="login-name" class="login-input" placeholder="Your Name" autocomplete="off">
+            <input type="password" id="login-password" class="login-input" placeholder="Password" autocomplete="off">
+            <button class="login-btn" onclick="checkLogin()">ACCESS PROXY</button>
+            <div class="login-error" id="login-error">Invalid credentials. Try again.</div>
+        </div>
+    </div>
+    
     <!-- Custom Cursor -->
     <div class="cursor-dot"></div>
 
@@ -852,6 +953,65 @@
 
 
     <script>
+        <script>
+        // Login System
+        const SITE_PASSWORD = "clifford2026"; // Change this to whatever you want
+        let currentUser = null;
+
+        // Check if already logged in
+        if (localStorage.getItem('clg-auth') === 'true' && localStorage.getItem('clg-user')) {
+            currentUser = localStorage.getItem('clg-user');
+            document.getElementById('login-overlay').style.display = 'none';
+            showWelcome();
+        } else {
+            // Block everything until login
+            document.getElementById('login-overlay').style.display = 'flex';
+        }
+
+        function checkLogin() {
+            const name = document.getElementById('login-name').value.trim();
+            const password = document.getElementById('login-password').value;
+            
+            if (!name) {
+                document.getElementById('login-error').textContent = 'Please enter your name.';
+                document.getElementById('login-error').style.display = 'block';
+                return;
+            }
+            
+            if (password === SITE_PASSWORD) {
+                // Success
+                localStorage.setItem('clg-auth', 'true');
+                localStorage.setItem('clg-user', name);
+                currentUser = name;
+                document.getElementById('login-overlay').style.display = 'none';
+                showWelcome();
+            } else {
+                // Failed
+                document.getElementById('login-error').textContent = 'Invalid password. Access denied.';
+                document.getElementById('login-error').style.display = 'block';
+                document.getElementById('login-password').value = '';
+            }
+        }
+
+        function showWelcome() {
+            setTimeout(() => {
+                showNotification(`Welcome back, ${currentUser}! 🎮`);
+            }, 500);
+        }
+
+        // Allow Enter key to submit
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginInputs = document.querySelectorAll('.login-input');
+            loginInputs.forEach(input => {
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') checkLogin();
+                });
+            });
+        });
+
+
+
+        
         const wispUrls = {
             main: "wss://dywhmcwp1y96m.cloudfront.net/wisp/",
             backup2: "wss://wisp.rhw.one/",
@@ -1297,6 +1457,7 @@ function showNotification(message) {
     </script>
 </body>
 </html>
+
 
 
 
