@@ -37,6 +37,9 @@
             --glass-bg: rgba(26, 29, 41, 0.6);
         }
 
+        * {
+            cursor: none !important;
+        }
 
         body, html {
             margin: 0; padding: 0; height: 100%;
@@ -52,6 +55,63 @@
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 999999;
+            transition: all 0.15s ease;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.4), inset 0 0 20px rgba(0, 217, 255, 0.2);
+        }
+
+        .cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 999999;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .cursor.hover {
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 217, 255, 0.1);
+            border-width: 3px;
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.6), inset 0 0 30px rgba(0, 217, 255, 0.3);
+        }
+
+        /* Click ripple effect */
+        .ripple {
+            position: fixed;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 999998;
+            animation: rippleEffect 0.6s ease-out;
+        }
+
+        @keyframes rippleEffect {
+            0% {
+                width: 20px;
+                height: 20px;
+                opacity: 1;
+            }
+            100% {
+                width: 100px;
+                height: 100px;
+                opacity: 0;
+            }
         }
 
         /* Floating particles background */
@@ -111,8 +171,8 @@
         .tab { 
             background: var(--tab-inactive); padding: 8px 12px; border-radius: 10px 10px 0 0; 
             font-size: 13px; min-width: 140px; max-width: 200px; color: var(--text-muted); 
-            border: 1px solid transparent; border-bottom: none; transition: all 0.2s ease; 
-            position: relative; display: flex; align-items: center; gap: 8px; cursor: pointer;
+            border: 1px solid transparent; border-bottom: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            position: relative; display: flex; align-items: center; gap: 8px;
         }
         .tab.active { 
             background: var(--tab-active); color: var(--text); border-color: var(--border);
@@ -126,7 +186,7 @@
         
         .close-tab-btn {
             background: none; border: none; color: inherit; font-size: 16px;
-            cursor: pointer; padding: 2px 6px; border-radius: 4px; line-height: 1;
+            padding: 2px 6px; border-radius: 4px; line-height: 1;
             display: flex; align-items: center; justify-content: center; opacity: 0.5;
             transition: all 0.2s;
         }
@@ -141,9 +201,9 @@
             background: var(--glass-bg); 
             padding: 0 20px; gap: 16px; 
             border-bottom: 1px solid var(--border); 
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 217, 255, 0.1);
         }
 
         .logo-container {
@@ -178,9 +238,10 @@
 
         .nav-buttons { display: flex; gap: 8px; }
         .nav-button { 
-            cursor: pointer; width: 34px; height: 34px; border-radius: 8px;
+            width: 34px; height: 34px; border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s; color: var(--text-muted); user-select: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            color: var(--text-muted); user-select: none;
             background: rgba(0, 217, 255, 0.05);
             border: 1px solid transparent;
         }
@@ -189,12 +250,13 @@
             color: var(--accent);
             border-color: var(--accent);
             box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
+            transform: translateY(-2px);
         }
 
 
         .settings-icon-img { 
             width: 20px; height: 20px; object-fit: contain; 
-            opacity: 0.7; transition: 0.2s; 
+            opacity: 0.7; transition: 0.3s; 
         }
         .nav-button:hover .settings-icon-img { 
             opacity: 1; 
@@ -207,14 +269,15 @@
             background: var(--glass-bg); 
             border-radius: 12px; padding: 0 16px; 
             border: 1px solid var(--border); height: 38px; 
-            transition: all 0.2s ease;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(15px) saturate(150%);
+            -webkit-backdrop-filter: blur(15px) saturate(150%);
         }
         .search-container:focus-within { 
             border-color: var(--accent); 
             box-shadow: 0 0 0 3px var(--accent-glow), 0 0 20px rgba(0, 217, 255, 0.2);
             background: rgba(26, 29, 41, 0.8);
+            transform: translateY(-1px);
         }
         input#bar { 
             flex-grow: 1; background: transparent; border: none; 
@@ -282,26 +345,41 @@
             background: rgba(0,0,0,0.85); 
             display: none; align-items: center; justify-content: center; 
             z-index: 100000; 
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
         .modal-overlay.show { display: flex; }
         .modal-content { 
             background: var(--glass-bg); 
-            padding: 30px; border-radius: 16px; 
-            border: 1px solid var(--accent); 
-            width: 420px; 
-            box-shadow: 0 20px 60px rgba(0, 217, 255, 0.2), 0 0 40px rgba(0, 217, 255, 0.1);
+            padding: 35px; border-radius: 20px; 
+            border: 1px solid rgba(0, 217, 255, 0.3); 
+            width: 440px; 
+            box-shadow: 0 20px 60px rgba(0, 217, 255, 0.25), 
+                        0 0 40px rgba(0, 217, 255, 0.15),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.1);
             text-align: center;
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            position: relative;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.5), transparent);
         }
         
         .setting-btn {
-            width: 100%; padding: 12px; margin: 4px 0; border-radius: 10px; 
+            width: 100%; padding: 13px; margin: 5px 0; border-radius: 12px; 
             border: 1px solid var(--border);
-            background: var(--hover); color: var(--text); font-weight: 500; 
-            cursor: pointer; transition: 0.2s;
+            background: rgba(30, 33, 45, 0.6);
+            backdrop-filter: blur(10px);
+            color: var(--text); font-weight: 500; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex; align-items: center; justify-content: center; 
             text-transform: uppercase; letter-spacing: 1px; font-size: 10px;
             position: relative;
@@ -309,29 +387,29 @@
         }
         .setting-btn:hover { 
             border-color: var(--accent); 
-            background: var(--tab-active); 
+            background: rgba(0, 217, 255, 0.1); 
             color: var(--accent);
-            box-shadow: 0 0 15px rgba(0, 217, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+            transform: translateY(-2px);
         }
         .setting-btn.active-wisp { 
             border-color: var(--accent); 
             background: var(--accent-glow); 
             color: white;
-            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+            box-shadow: 0 0 25px rgba(0, 217, 255, 0.4), inset 0 0 20px rgba(0, 217, 255, 0.2);
         }
         .setting-btn.primary { 
-            background: var(--accent); 
+            background: linear-gradient(135deg, var(--accent) 0%, #00a8cc 100%); 
             color: #0f1117; 
             border: none; 
             font-size: 12px; 
-            padding: 14px;
+            padding: 15px;
             font-weight: 600;
-            box-shadow: 0 4px 20px rgba(0, 217, 255, 0.4);
+            box-shadow: 0 6px 25px rgba(0, 217, 255, 0.5);
         }
         .setting-btn.primary:hover {
-            background: #00a8cc;
-            box-shadow: 0 6px 30px rgba(0, 217, 255, 0.6);
-            transform: translateY(-2px);
+            box-shadow: 0 8px 35px rgba(0, 217, 255, 0.7);
+            transform: translateY(-3px);
         }
 
 
@@ -342,23 +420,27 @@
         .btn-row .setting-btn { flex: 1; }
 
 
-        .custom-wisp-box { display: flex; gap: 5px; margin-top: 5px; }
+        .custom-wisp-box { display: flex; gap: 5px; margin-top: 8px; }
         .custom-wisp-input { 
-            flex: 1; background: var(--input-bg); 
-            border: 1px solid var(--border); border-radius: 8px; 
-            color: white; padding: 8px; font-size: 11px; outline: none;
+            flex: 1; 
+            background: rgba(15, 17, 23, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border); border-radius: 10px; 
+            color: white; padding: 10px; font-size: 11px; outline: none;
             font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.3s;
         }
         .custom-wisp-input:focus { 
             border-color: var(--accent);
-            box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
         }
 
 
         .section-label { 
             color: var(--text-muted); font-size: 10px; 
             text-transform: uppercase; letter-spacing: 2px; 
-            margin: 15px 0 5px 0; display: block; 
+            margin: 20px 0 8px 0; display: block;
+            font-weight: 600;
         }
 
         footer {
@@ -367,8 +449,8 @@
             left: 0;
             right: 0;
             background: var(--glass-bg);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
             border-top: 1px solid var(--border);
             padding: 12px 20px;
             text-align: center;
@@ -376,6 +458,7 @@
             color: var(--text-muted);
             z-index: 10;
             letter-spacing: 1px;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
         }
 
         footer a {
@@ -387,10 +470,23 @@
         footer a:hover {
             text-shadow: 0 0 10px var(--accent);
         }
+
+        /* Mobile/Touch devices - show default cursor */
+        @media (hover: none) and (pointer: coarse) {
+            * {
+                cursor: auto !important;
+            }
+            .cursor, .cursor-dot {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
 
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-dot"></div>
 
     <div id="loading-screen"><div class="black-hole"></div></div>
 
@@ -499,6 +595,57 @@
 
 
     <script>
+        // Custom Cursor Logic
+        const cursor = document.querySelector('.cursor');
+        const cursorDot = document.querySelector('.cursor-dot');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+        let dotX = 0, dotY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            // Smooth easing for main cursor
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+
+            // Faster movement for dot
+            dotX += (mouseX - dotX) * 0.3;
+            dotY += (mouseY - dotY) * 0.3;
+            cursorDot.style.left = dotX + 'px';
+            cursorDot.style.top = dotY + 'px';
+
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Hover effect on interactive elements
+        const hoverTargets = document.querySelectorAll('button, a, input, .nav-button, .tab, .setting-btn');
+        hoverTargets.forEach(target => {
+            target.addEventListener('mouseenter', () => {
+                cursor.classList.add('hover');
+            });
+            target.addEventListener('mouseleave', () => {
+                cursor.classList.remove('hover');
+            });
+        });
+
+        // Click ripple effect
+        document.addEventListener('click', (e) => {
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            ripple.style.left = e.clientX + 'px';
+            ripple.style.top = e.clientY + 'px';
+            ripple.style.transform = 'translate(-50%, -50%)';
+            document.body.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        });
+
         const wispUrls = {
             main: "wss://dywhmcwp1y96m.cloudfront.net/wisp/",
             backup2: "wss://wisp.rhw.one/",
