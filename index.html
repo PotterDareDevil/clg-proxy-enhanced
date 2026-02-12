@@ -130,6 +130,25 @@
             }
         }
 
+        @keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+
         /* Floating particles background */
         body::before {
             content: '';
@@ -1106,6 +1125,57 @@ animateCursor();
             document.body.appendChild(ripple);
             setTimeout(() => ripple.remove(), 600);
         });
+// Navbar toggle keybind (Ctrl + H)
+let navbarHidden = false;
+
+document.addEventListener('keydown', (e) => {
+    // Check for Ctrl + H (or Cmd + H on Mac)
+    if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
+        e.preventDefault(); // Prevent default browser behavior
+        
+        navbarHidden = !navbarHidden;
+        
+        if (navbarHidden) {
+            document.body.classList.add('nav-hidden');
+        } else {
+            document.body.classList.remove('nav-hidden');
+        }
+        
+        // Optional: Show a quick notification
+        showNotification(navbarHidden ? 'Navigation Hidden (Ctrl+H to show)' : 'Navigation Visible');
+    }
+});
+
+// Quick notification function
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        color: var(--accent);
+        padding: 12px 20px;
+        border-radius: 10px;
+        border: 1px solid var(--accent);
+        box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+        z-index: 100001;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        animation: slideInRight 0.3s ease;
+        pointer-events: none;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 2000);
+}
 
 
         window.onload = () => { 
@@ -1120,5 +1190,6 @@ animateCursor();
     </script>
 </body>
 </html>
+
 
 
