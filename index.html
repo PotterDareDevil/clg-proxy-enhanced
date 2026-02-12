@@ -1181,11 +1181,7 @@ document.addEventListener('keydown', (e) => {
         document.getElementById('panic-screen').classList.toggle('active', panicActive);
     }
 });
-
-// EXISTING CODE BELOW:
-const SITE_PASSWORD = "clifford2026";
-
-            
+        
             // Login System
         const SITE_PASSWORD = "clifford2026"; // Change this to whatever you want
         let currentUser = null;
@@ -1648,15 +1644,51 @@ function showNotification(message) {
     scramjet.init();
     createNewTab(); 
     refreshAllPings();
-    loadBookmarks(); // ADD THIS LINE
+    loadBookmarks();
     setTimeout(hideBH, 1000);
+    
+    // Custom Cursor Logic - Initialize after page loads
+    const cursorDot = document.querySelector('.cursor-dot');
+    let mouseX = 0, mouseY = 0;
+    let dotX = 0, dotY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+
+    function animateCursor() {
+        dotX += (mouseX - dotX) * 0.2;
+        dotY += (mouseY - dotY) * 0.2;
+        cursorDot.style.left = dotX + 'px';
+        cursorDot.style.top = dotY + 'px';
+
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+    
+    // Cursor toggle keybind (Ctrl + C)
+    let cursorVisible = true;
+
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+            e.preventDefault();
+            
+            cursorVisible = !cursorVisible;
+            cursorDot.style.opacity = cursorVisible ? '1' : '0';
+            
+            showNotification(cursorVisible ? 'Custom Cursor Enabled' : 'Custom Cursor Hidden');
+        }
+    });
 };
+
 
 
         document.getElementById('bar').onkeydown = (e) => { if(e.key === 'Enter') nav(); };
     </script>
 </body>
 </html>
+
 
 
 
