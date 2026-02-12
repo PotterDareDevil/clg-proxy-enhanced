@@ -2203,18 +2203,15 @@ updateClock();
         function hideBH() { document.getElementById('loading-screen').style.opacity = '0'; setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500); }
 
 
-        function createNewTab() {
+      function createNewTab() {
     const id = Date.now() + Math.random();
     tabs.push({ id, url: '', title: 'New Tab', loading: false });
     const frame = document.createElement('iframe');
     frame.id = `frame-${id}`;
-    frame.onload = () => { 
-        const t = tabs.find(x => x.id === id); 
-        if(t) { t.loading = false; renderTabs(); hideBH(); completeProgress(); } // ADD completeProgress()
-    };
     document.getElementById('frame-container').appendChild(frame);
     switchTab(id);
 }
+
 
 
         function switchTab(id) {
@@ -2257,16 +2254,27 @@ updateClock();
     if(!val) return;
     document.activeElement.blur(); 
     showBH();
-    showProgress(); // ADD THIS
+    showProgress();
     let url = (val.includes('.') && !val.includes(' ')) ? (val.startsWith('http') ? val : 'https://' + val) : `https://search.brave.com/search?q=${encodeURIComponent(val)}`;
     const tab = tabs.find(t => t.id === activeTabId);
-    tab.url = url; tab.title = url.split('/')[2] || url;
-    document.getElementById(`frame-${activeTabId}`).src = scramjet.encodeUrl(url);
+    tab.url = url; 
+    tab.title = url.split('/')[2] || url;
+    
+    const frame = document.getElementById(`frame-${activeTabId}`);
+    frame.src = scramjet.encodeUrl(url);
     document.getElementById('new-tab-ui').style.display = 'none';
+    
+    // Auto-hide loading after 2 seconds (proxy pages don't trigger onload reliably)
+    setTimeout(() => {
+        hideBH();
+        completeProgress();
+    }, 2000);
+    
     renderTabs();
     addToHistory(url, tab.title);
     saveTabs();
 }
+
 
 
 
@@ -2540,6 +2548,7 @@ document.getElementById('bar').onkeydown = (e) => { if(e.key === 'Enter') nav();
     </script>
 </body>
 </html>
+
 
 
 
