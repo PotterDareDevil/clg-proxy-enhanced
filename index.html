@@ -719,28 +719,33 @@
         </div>
 
 
-        <nav class="navbar">
-            <div class="logo-container">
-                <img src="clg-bunny.png" alt="CLG" class="logo-bunny">
-                <span class="logo-text">CLG</span>
-            </div>
-            <div class="nav-buttons">
-                <div class="nav-button magnetic-btn" onclick="goBack()">←</div>
-                <div class="nav-button magnetic-btn" onclick="goForward()">→</div>
-                <div class="nav-button magnetic-btn" onclick="reloadPage()">↻</div>
-            </div>
-            <div class="search-container">
-                <input type="text" placeholder="Search with Brave or enter URL" id="bar" autocomplete="off">
-            </div>
-            <div class="nav-buttons">
-                <div class="nav-button magnetic-btn" onclick="showSettings()" style="position: relative;">
-                    <img src="settingsicon.png" class="settings-icon-img" alt="Settings">
-                    <div class="settings-notification"></div>
-                </div>
-                <div class="nav-button magnetic-btn" onclick="toggleFullScreen()">⛶</div>
-            </div>
-        </nav>
+       <nav class="navbar">
+    <div class="logo-container">
+        <img src="clg-bunny.png" alt="CLG" class="logo-bunny">
+        <span class="logo-text">CLG</span>
     </div>
+    <div class="nav-buttons">
+        <div class="nav-button magnetic-btn" onclick="goBack()">←</div>
+        <div class="nav-button magnetic-btn" onclick="goForward()">→</div>
+        <div class="nav-button magnetic-btn" onclick="reloadPage()">↻</div>
+    </div>
+    <div class="search-container">
+        <input type="text" placeholder="Search with Brave or enter URL" id="bar" autocomplete="off">
+    </div>
+    <div class="nav-buttons">
+        <!-- ADD THIS GAMES BUTTON HERE: -->
+        <div class="nav-button magnetic-btn" onclick="showGames()" style="position: relative;">
+            🎮
+        </div>
+        <!-- EXISTING SETTINGS BUTTON: -->
+        <div class="nav-button magnetic-btn" onclick="showSettings()" style="position: relative;">
+            <img src="settingsicon.png" class="settings-icon-img" alt="Settings">
+            <div class="settings-notification"></div>
+        </div>
+        <div class="nav-button magnetic-btn" onclick="toggleFullScreen()">⛶</div>
+    </div>
+</nav>
+
 
 
     <div class="frame-container" id="frame-container">
@@ -815,6 +820,34 @@
             </button>
         </div>
     </div>
+<div class="modal-overlay" id="games-modal" onclick="hideGames()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2 style="margin-top:0; color: var(--accent); letter-spacing: 2px; font-size: 18px; text-transform: uppercase;">Games</h2>
+        
+        <span class="section-label">Browser Games</span>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button class="setting-btn" onclick="openGame('https://nzp.gay')">
+                🧟 COD Zombies (NZP)
+            </button>
+            <button class="setting-btn" onclick="openGame('https://krunker.io')">
+                🔫 Krunker.io
+            </button>
+            <button class="setting-btn" onclick="openGame('https://1v1.lol')">
+                🏗️ 1v1.LOL
+            </button>
+            <button class="setting-btn" onclick="openGame('https://shellshock.io')">
+                🥚 Shell Shockers
+            </button>
+            <button class="setting-btn" onclick="openGame('https://retrobowl.me')">
+                🏈 Retro Bowl
+            </button>
+        </div>
+
+        <button class="setting-btn" onclick="hideGames()" style="margin-top: 20px; border: none; background: transparent; opacity: 0.6; text-transform: none; letter-spacing: 0;">
+            Close
+        </button>
+    </div>
+</div>
 
 
     <script>
@@ -1062,6 +1095,26 @@
         function goBack() { try { document.getElementById(`frame-${activeTabId}`).contentWindow.history.back(); } catch(e){} }
         function goForward() { try { document.getElementById(`frame-${activeTabId}`).contentWindow.history.forward(); } catch(e){} }
         function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+        function showGames() { 
+    document.getElementById('games-modal').classList.add('show'); 
+}
+
+function hideGames() { 
+    document.getElementById('games-modal').classList.remove('show'); 
+}
+
+function openGame(url) {
+    const val = url;
+    document.activeElement.blur(); 
+    showBH();
+    const tab = tabs.find(t => t.id === activeTabId);
+    tab.url = url;
+    tab.title = url.split('/')[2] || url;
+    document.getElementById(`frame-${activeTabId}`).src = scramjet.encodeUrl(url);
+    document.getElementById('new-tab-ui').style.display = 'none';
+    renderTabs();
+    hideGames();
+}
 
 
         // Custom Cursor Logic - Clean
@@ -1191,6 +1244,7 @@ function showNotification(message) {
     </script>
 </body>
 </html>
+
 
 
 
