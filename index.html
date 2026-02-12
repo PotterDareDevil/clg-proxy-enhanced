@@ -1137,18 +1137,6 @@ function animateCursor() {
     requestAnimationFrame(animateCursor);
 }
 animateCursor();
-
-        function animateCursor() {
-    dotX += (mouseX - dotX) * 0.2;
-    dotY += (mouseY - dotY) * 0.2;
-    cursorDot.style.left = dotX + 'px';
-    cursorDot.style.top = dotY + 'px';
-
-    requestAnimationFrame(animateCursor);
-}
-animateCursor();
-
-// PASTE THE NEW CODE HERE:
 // Hide cursor when iframe is focused
 let lastActiveElement = document.activeElement;
 
@@ -1195,10 +1183,6 @@ document.querySelector('footer').addEventListener('mouseenter', () => {
 document.querySelector('.tab-strip').addEventListener('mouseenter', () => {
     cursorDot.style.opacity = '1';
 });
-
-// THEN YOUR EXISTING updateHoverTargets() function continues below...
-function updateHoverTargets() {
-
 
 
         function updateHoverTargets() {
@@ -1307,6 +1291,7 @@ function showNotification(message) {
     </script>
 </body>
 </html>
+
 
 
 
